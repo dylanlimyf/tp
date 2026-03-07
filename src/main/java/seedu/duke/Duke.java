@@ -1,5 +1,7 @@
 package seedu.duke;
 
+import seedu.duke.command.Command;
+
 import java.util.Scanner;
 
 public class Duke {
@@ -7,15 +9,18 @@ public class Duke {
      * Main entry-point for the java.duke.Duke application.
      */
     public static void main(String[] args) {
-        String logo = " ____        _        \n"
-                + "|  _ \\ _   _| | _____ \n"
-                + "| | | | | | | |/ / _ \\\n"
-                + "| |_| | |_| |   <  __/\n"
-                + "|____/ \\__,_|_|\\_\\___|\n";
-        System.out.println("Hello from\n" + logo);
-        System.out.println("What is your name?");
-
         Scanner in = new Scanner(System.in);
-        System.out.println("Hello " + in.nextLine());
+        Parser parser = new Parser();
+
+        while (true) {
+            String message = in.nextLine().strip();
+            String[] components = message.split("\\s+", 2);
+            try {
+                Command c = parser.parse(components[0]);
+                c.execute();
+            } catch (IllegalArgumentException e) {
+                System.out.println("Invalid Command");
+            }
+        }
     }
 }
