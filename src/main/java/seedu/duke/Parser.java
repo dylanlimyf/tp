@@ -1,6 +1,16 @@
 package seedu.duke;
 
-import seedu.duke.command.*;
+import seedu.duke.command.BalanceCommand;
+import seedu.duke.command.Command;
+import seedu.duke.command.CommandWord;
+import seedu.duke.command.CreateCommand;
+import seedu.duke.command.ExitCommand;
+import seedu.duke.command.HelpCommand;
+import seedu.duke.command.KeygenCommand;
+import seedu.duke.command.ListCommand;
+import seedu.duke.command.SendCommand;
+import seedu.duke.command.ValidateCommand;
+import seedu.duke.command.ViewBlockCommand;
 
 public class Parser {
     public CommandWord parseCommand(String commandWord) {
@@ -15,7 +25,7 @@ public class Parser {
      *
      * @param inputText the string from the user input
      * @return the class associated with the command
-     * that was parsed from the input text
+     *     that was parsed from the input text
      */
     public Command parse(String inputText) {
         CommandWord commandWord = parseCommand(inputText);

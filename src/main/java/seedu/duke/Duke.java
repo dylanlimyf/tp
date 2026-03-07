@@ -2,6 +2,7 @@ package seedu.duke;
 
 import seedu.duke.command.Command;
 
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class Duke {
@@ -13,13 +14,15 @@ public class Duke {
         Parser parser = new Parser();
 
         while (true) {
-            String message = in.nextLine().strip();
-            String[] components = message.split("\\s+", 2);
             try {
+                String message = in.nextLine().strip();
+                String[] components = message.split("\\s+", 2);
                 Command c = parser.parse(components[0]);
                 c.execute();
             } catch (IllegalArgumentException e) {
                 System.out.println("Invalid Command");
+            } catch (NoSuchElementException e) {
+                System.out.println("No Input");
             }
         }
     }
