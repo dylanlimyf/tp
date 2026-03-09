@@ -36,4 +36,33 @@ public class Blockchain {
     public Block getBlock(int index) {
         return blocks.get(index);
     }
+
+    public ValidationResult validate() {
+        for (int i = 0; i < blocks.size(); i++) {
+            Block block = blocks.get(i);
+
+            String computedHash = block.computeCurrentHash();
+            if (!computedHash.equals(block.getCurrentHash())) {
+                return ValidationResult.invalid("Hash mismatch at Block " + i + ".");
+            }
+
+            if (!block.hasValidTransactionData()) {
+                return ValidationResult.invalid("Invalid transaction data at Block " + i + ".");
+            }
+
+            if (i == 0) {
+                if (!GENESIS_PREVIOUS_HASH.equals(block.getPreviousHash())) {
+                    return ValidationResult.invalid("Invalid previous hash linkage at Block " + i + ".");
+                }
+                continue;
+            }
+
+            Block previousBlock = blocks.get(i - 1);
+            if (!previousBlock.getCurrentHash().equals(block.getPreviousHash())) {
+                return ValidationResult.invalid("Invalid previous hash linkage at Block " + i + ".");
+            }
+        }
+
+        return ValidationResult.valid();
+    }
 }
