@@ -28,14 +28,17 @@ public class Parser {
      *     that was parsed from the input text
      */
     public Command parse(String inputText) {
-        CommandWord commandWord = parseCommand(inputText);
+        String trimmedInput = inputText.trim();
+        String[] components = trimmedInput.split("\\s+", 2);
+        CommandWord commandWord = parseCommand(components[0]);
+        String arguments = components.length > 1 ? components[1].trim() : "";
         return switch (commandWord) {
         case LIST -> new ListCommand();
         case HELP -> new HelpCommand();
         case CREATE -> new CreateCommand();
         case BALANCE -> new BalanceCommand();
         case VALIDATE -> new ValidateCommand();
-        case VIEWBLOCK -> new ViewBlockCommand();
+        case VIEWBLOCK -> new ViewBlockCommand(arguments);
         case EXIT -> new ExitCommand();
         case SEND -> new SendCommand();
         case KEYGEN -> new KeygenCommand();
