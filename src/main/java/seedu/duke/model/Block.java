@@ -23,7 +23,8 @@ public class Block {
                 computeHash(index, timestamp, previousHash, transactions));
     }
 
-    public Block(int index, LocalDateTime timestamp, String previousHash, List<String> transactions, String currentHash) {
+    public Block(int index, LocalDateTime timestamp, String previousHash,
+                 List<String> transactions, String currentHash) {
         this.index = index;
         this.timestamp = timestamp;
         this.previousHash = previousHash;
