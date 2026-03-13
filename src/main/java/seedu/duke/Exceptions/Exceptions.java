@@ -1,4 +1,4 @@
-package seedu.duke.Exceptions;
+package seedu.duke.exceptions;
 
 /**
  * Custom exception type used throughout the Crypto1010 application.
