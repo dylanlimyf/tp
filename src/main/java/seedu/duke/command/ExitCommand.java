@@ -9,7 +9,7 @@ public class ExitCommand extends Command {
     }
 
     @Override
-    public void execute() {
+    public void execute(String description) {
         System.out.println("exit command executed");
     }
 }

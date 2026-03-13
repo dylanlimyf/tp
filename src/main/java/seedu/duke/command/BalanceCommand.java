@@ -9,7 +9,7 @@ public class BalanceCommand extends Command {
     }
 
     @Override
-    public void execute() {
+    public void execute(String description) {
         System.out.println("balance command executed");
     }
 }

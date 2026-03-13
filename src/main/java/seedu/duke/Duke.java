@@ -12,13 +12,12 @@ public class Duke {
      */
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
-        Parser parser = new Parser();
 
         while (true) {
+            String message = in.nextLine().strip();
             try {
-                String message = in.nextLine().strip();
                 String[] components = message.split("\\s+", 2);
-                Command c = parser.parse(components[0]);
+                Command c = Parser.parse(components[0]);
                 if (c instanceof ExitCommand) {
                     break;
                 }
@@ -27,6 +26,10 @@ public class Duke {
                 System.out.println("Invalid Command");
             } catch (NoSuchElementException e) {
                 System.out.println("No Input");
+            } catch (ArrayIndexOutOfBoundsException e) {
+                String[] components = message.split("\\s+", 2);
+                Command c = Parser.parse(components[0]);
+                c.execute("");
             }
         }
     }

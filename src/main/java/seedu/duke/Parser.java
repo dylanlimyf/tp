@@ -13,7 +13,7 @@ import seedu.duke.command.ValidateCommand;
 import seedu.duke.command.ViewBlockCommand;
 
 public class Parser {
-    public CommandWord parseCommand(String commandWord) {
+    public static CommandWord parseCommand(String commandWord) {
         return CommandWord.valueOf(commandWord.toUpperCase());
     }
 
@@ -27,7 +27,7 @@ public class Parser {
      * @return the class associated with the command
      *     that was parsed from the input text
      */
-    public Command parse(String inputText) {
+    public static Command parse(String inputText) {
         CommandWord commandWord = parseCommand(inputText);
         return switch (commandWord) {
         case LIST -> new ListCommand();
