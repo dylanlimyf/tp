@@ -1,5 +1,6 @@
 package seedu.duke.command;
 
+import seedu.duke.exceptions.Exceptions;
 import seedu.duke.model.Blockchain;
 import seedu.duke.model.WalletManager;
 
@@ -19,39 +20,34 @@ public class SendCommand extends Command {
     }
 
     @Override
-    public void execute(Blockchain blockchain) {
+    public void execute(Blockchain blockchain) throws Exceptions {
         // Parse arguments
         ParsedArgs parsed = parseArguments(arguments);
         if (parsed == null) {
-            System.out.println(INVALID_FORMAT_ERROR);
-            return;
+            throw new Exceptions(INVALID_FORMAT_ERROR);
         }
 
         // Validate wallet exists
         if (!walletManager.hasWallet(parsed.walletName)) {
-            System.out.println(WALLET_NOT_FOUND_ERROR);
-            return;
+            throw new Exceptions(WALLET_NOT_FOUND_ERROR);
         }
 
         // Validate amount
         double amount = parseAmount(parsed.amount);
         if (amount <= 0) {
-            System.out.println(AMOUNT_INVALID_ERROR);
-            return;
+            throw new Exceptions(AMOUNT_INVALID_ERROR);
         }
 
         // Validate recipient address
         if (!isValidAddress(parsed.recipientAddress)) {
-            System.out.println(INVALID_ADDRESS_ERROR);
-            return;
+            throw new Exceptions(INVALID_ADDRESS_ERROR);
         }
 
         // Calculate balance
         double balance = blockchain.getBalance(parsed.walletName);
         double fee = parsed.fee != null ? parseAmount(parsed.fee) : 0.0;
         if (balance < amount + fee) {
-            System.out.println(INSUFFICIENT_BALANCE_ERROR);
-            return;
+            throw new Exceptions(INSUFFICIENT_BALANCE_ERROR);
         }
 
         // If all validations pass, print success (for now, since actual sending not implemented)
