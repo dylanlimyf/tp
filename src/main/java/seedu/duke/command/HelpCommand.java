@@ -18,8 +18,10 @@ public class HelpCommand extends Command {
 
     @Override
     public void execute(String description, Blockchain blockchain) {
+        WalletManager walletManager = new WalletManager();
+        Parser parser = new Parser(walletManager);
         try {
-            Command c = Parser.parse(description);
+            Command c = parser.parse(description);
             c.displayHelpDescription();
         } catch (IllegalArgumentException e) {
             for (CommandWord c : CommandWord.values()) {
