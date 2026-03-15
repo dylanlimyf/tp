@@ -1,6 +1,8 @@
 package seedu.duke.command;
 
 import seedu.duke.Parser;
+import seedu.duke.exceptions.Exceptions;
+import seedu.duke.model.Blockchain;
 
 public class HelpCommand extends Command {
     private static final String HELP_DESCRIPTION = """
@@ -15,7 +17,7 @@ public class HelpCommand extends Command {
     }
 
     @Override
-    public void execute(String description) {
+    public void execute(String description, Blockchain blockchain) {
         try {
             Command c = Parser.parse(description);
             c.displayHelpDescription();

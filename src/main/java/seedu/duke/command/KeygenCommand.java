@@ -1,5 +1,8 @@
 package seedu.duke.command;
 
+import seedu.duke.exceptions.Exceptions;
+import seedu.duke.model.Blockchain;
+
 public class KeygenCommand extends Command {
     private static final String HELP_DESCRIPTION = """
             format: keygen w/NAME
@@ -12,7 +15,7 @@ public class KeygenCommand extends Command {
     }
 
     @Override
-    public void execute(String description) {
+    public void execute(String description, Blockchain blockchain) throws Exceptions {
         System.out.println("keygen command executed");
     }
 }

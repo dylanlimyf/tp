@@ -11,8 +11,15 @@ import seedu.duke.command.ListCommand;
 import seedu.duke.command.SendCommand;
 import seedu.duke.command.ValidateCommand;
 import seedu.duke.command.ViewBlockCommand;
+import seedu.duke.model.WalletManager;
 
 public class Parser {
+    private final WalletManager walletManager;
+
+    public Parser(WalletManager walletManager) {
+        this.walletManager = walletManager;
+    }
+
     public static CommandWord parseCommand(String commandWord) {
         return CommandWord.valueOf(commandWord.toUpperCase());
     }
@@ -28,16 +35,19 @@ public class Parser {
      *     that was parsed from the input text
      */
     public static Command parse(String inputText) {
-        CommandWord commandWord = parseCommand(inputText);
+        String trimmedInput = inputText.trim();
+        String[] components = trimmedInput.split("\\s+", 2);
+        CommandWord commandWord = parseCommand(components[0]);
+        String arguments = components.length > 1 ? components[1].trim() : "";
         return switch (commandWord) {
-        case LIST -> new ListCommand();
+        case LIST -> new ListCommand(walletManager);
         case HELP -> new HelpCommand();
-        case CREATE -> new CreateCommand();
+        case CREATE -> new CreateCommand(arguments, walletManager);
         case BALANCE -> new BalanceCommand();
         case VALIDATE -> new ValidateCommand();
-        case VIEWBLOCK -> new ViewBlockCommand();
+        case VIEWBLOCK -> new ViewBlockCommand(arguments);
         case EXIT -> new ExitCommand();
-        case SEND -> new SendCommand();
+        case SEND -> new SendCommand(arguments, walletManager);
         case KEYGEN -> new KeygenCommand();
         };
     }
