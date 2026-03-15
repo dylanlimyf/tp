@@ -20,7 +20,7 @@ public class Parser {
         this.walletManager = walletManager;
     }
 
-    public static CommandWord parseCommand(String commandWord) {
+    public CommandWord parseCommand(String commandWord) {
         return CommandWord.valueOf(commandWord.toUpperCase());
     }
 
@@ -34,7 +34,7 @@ public class Parser {
      * @return the class associated with the command
      *     that was parsed from the input text
      */
-    public static Command parse(String inputText) {
+    public Command parse(String inputText) {
         String trimmedInput = inputText.trim();
         String[] components = trimmedInput.split("\\s+", 2);
         CommandWord commandWord = parseCommand(components[0]);
