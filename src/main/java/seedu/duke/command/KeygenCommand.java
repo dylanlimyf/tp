@@ -11,7 +11,8 @@ import seedu.duke.model.WalletManager;
 public class KeygenCommand extends Command {
     private static final String INVALID_WALLET_NUMBER_ERROR = "Error: Invalid number of args";
     private static final String INVALID_FORMAT_ERROR = "Error: Invalid send format. Use: keygen w/WALLET";
-    private static final String WALLET_NOT_FOUND_ERROR = "Error: Wallet not found.";
+    private static final String WALLET_NOT_FOUND_ERROR = "Error: Wallet not found";
+    private static final String KEY_PAIR_GENERATION_SUCCESSFUL = "Key pair successfully generated";
 
     private final String arguments;
     private final WalletManager walletManager;
@@ -35,6 +36,7 @@ public class KeygenCommand extends Command {
         for (Wallet wallet : wallets) {
             if (wallet.getName().equals(walletName)) {
                 wallet.setKeys(Key.generateKeyPair());
+                System.out.println(KEY_PAIR_GENERATION_SUCCESSFUL);
             }
         }
     }
