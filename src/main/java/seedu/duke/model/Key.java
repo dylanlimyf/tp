@@ -26,7 +26,7 @@ public class Key {
         this.modulus = modulus;
         this.exponent = exponent;
         this.isPublic = isPublic;
-        this.walletAddress = isPublic ? deriveAddress(modulus, exponent) : null;
+        this.walletAddress = isPublic ? deriveAddress(modulus, exponent) : 0;
     }
 
     private static int deriveAddress(BigInteger modulus, BigInteger exponent) {
