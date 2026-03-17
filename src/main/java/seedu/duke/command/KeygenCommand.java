@@ -1,11 +1,52 @@
 package seedu.duke.command;
 
+import java.util.List;
+
 import seedu.duke.exceptions.Exceptions;
 import seedu.duke.model.Blockchain;
+import seedu.duke.model.Key;
+import seedu.duke.model.Wallet;
+import seedu.duke.model.WalletManager;
 
 public class KeygenCommand extends Command {
+    private static final String INVALID_WALLET_NUMBER_ERROR = "Error: Invalid number of args";
+    private static final String INVALID_FORMAT_ERROR = "Error: Invalid send format. Use: keygen w/WALLET";
+    private static final String WALLET_NOT_FOUND_ERROR = "Error: Wallet not found.";
+
+    private final String arguments;
+    private final WalletManager walletManager;
+
+    public KeygenCommand(String arguments, WalletManager walletManager) {
+        this.arguments = arguments;
+        this.walletManager = walletManager;
+    }
+
     @Override
     public void execute(Blockchain blockchain) throws Exceptions {
-        System.out.println("keygen command executed");
+        // Parse wallet name
+        String walletName = parseArguments(arguments);
+
+        // Validate wallet exists
+        if (!walletManager.hasWallet(walletName)) {
+            throw new Exceptions(WALLET_NOT_FOUND_ERROR);
+        }
+
+        List<Wallet> wallets = walletManager.getWallets();
+        for (Wallet wallet : wallets) {
+            if (wallet.getName().equals(walletName)) {
+                wallet.setKeys(Key.generateKeyPair());
+            }
+        }
+    }
+
+    private String parseArguments(String args) throws Exceptions{
+        String[] parts = args.split("\\s+");
+        if (parts.length != 1) {
+            throw new Exceptions(INVALID_WALLET_NUMBER_ERROR);
+        } else if (parts[0].startsWith("w/")) {
+            return parts[0].substring(2);
+        } else {
+            throw new Exceptions(INVALID_FORMAT_ERROR);
+        }
     }
 }

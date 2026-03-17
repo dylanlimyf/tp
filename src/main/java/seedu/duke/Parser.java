@@ -48,7 +48,7 @@ public class Parser {
         case VIEWBLOCK -> new ViewBlockCommand(arguments);
         case EXIT -> new ExitCommand();
         case SEND -> new SendCommand(arguments, walletManager);
-        case KEYGEN -> new KeygenCommand();
+        case KEYGEN -> new KeygenCommand(arguments, walletManager);
         };
     }
 }
