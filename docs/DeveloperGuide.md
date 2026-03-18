@@ -1,190 +1,154 @@
 # Crypto1010 Developer Guide
 
-## Product Overview
-Crypto1010 is a Java 17 command-line application that simulates blockchain wallet operations. It supports:
-- wallet creation and listing
-- key generation for wallets
-- sending transactions with fee handling
-- block viewing and chain validation
-- JSON-based blockchain persistence
+## Acknowledgements
+- Java Platform, Standard Edition 17 API documentation: https://docs.oracle.com/en/java/javase/17/docs/api/
+- JUnit 5 User Guide (for unit testing approach and assertions): https://junit.org/junit5/docs/current/user-guide/
+- Gradle User Manual (build and task orchestration): https://docs.gradle.org/current/userguide/userguide.html
+- SHA-256 usage through Java `MessageDigest` API from the Java standard library documentation.
 
-## Target User Profile
-- Students learning blockchain fundamentals through a CLI workflow
-- Users comfortable with terminal-based interaction
-- Developers extending a compact Java codebase
+## Design & implementation
+Crypto1010 is implemented as a modular command-line application with clear separation between input parsing, command execution, domain model, and persistence.
 
-## Value Proposition
-The project provides a minimal but practical blockchain simulation where users can create transactions, inspect block internals, and validate chain integrity without external infrastructure.
+### High-level structure
+- `Duke` manages the main loop, input capture, and save/load lifecycle.
+- `Parser` maps raw user input to concrete command objects.
+- `command` package implements user-facing functionality (`create`, `send`, `balance`, etc.).
+- `model` package contains core blockchain and wallet logic.
+- `storage` package persists the blockchain to JSON (`data/blockchain.json`).
 
-## Architecture
-The system follows a layered CLI architecture:
-- `Duke`:
-  - application entry point
-  - reads user input loop
-  - loads/saves blockchain through storage
-  - delegates command parsing and execution
-- `Parser`:
-  - maps command words to `Command` subclasses
-- `command` package:
-  - encapsulates use cases (`create`, `send`, `validate`, etc.)
-- `model` package:
-  - blockchain and wallet domain objects
-- `storage` package:
-  - JSON serialization and deserialization for blockchain state
+### Command execution flow
+1. User enters command text in the CLI.
+2. `Parser` extracts command word and arguments.
+3. A concrete `Command` subclass is instantiated.
+4. `Command.execute(...)` mutates/queries model state.
+5. `Duke` saves blockchain state after successful command execution.
 
-## Component Responsibilities
+### Blockchain model
+- A `Blockchain` stores an ordered list of `Block`.
+- Each `Block` has:
+  - index
+  - timestamp
+  - previous hash
+  - transactions
+  - current hash (SHA-256 of block payload)
+- `validate()` verifies:
+  - hash consistency
+  - previous-hash linkage
+  - transaction data quality
 
-### `Duke`
-File: `src/main/java/seedu/duke/Duke.java`
-- Loads blockchain from `BlockchainStorage`
-- Initializes `WalletManager`
-- Runs the command loop
-- Saves blockchain after each successful command and on `exit`
-
-### `Parser`
-File: `src/main/java/seedu/duke/Parser.java`
-- Splits input into `commandWord` and arguments
-- Returns the matching command instance via `CommandWord`
-- Throws `IllegalArgumentException` for unknown commands
-
-### Commands
-Files: `src/main/java/seedu/duke/command/*`
-- `CreateCommand`: creates wallets in-memory
-- `ListCommand`: prints wallet names
-- `KeygenCommand`: generates key pair for existing wallet
-- `BalanceCommand`: computes wallet balance from blockchain transactions
-- `SendCommand`: parses prefixed arguments, validates address/fee/speed, appends transfer + fee transactions
-- `ValidateCommand`: validates entire chain
-- `ViewBlockCommand`: displays block details by index
-- `HelpCommand`: shows per-command help or full command list
-- `ExitCommand`: marker command used by `Duke` to terminate after save
-
-### Model
-Files: `src/main/java/seedu/duke/model/*`
-- `Block`:
-  - immutable block data with SHA-256 hash computation
-  - transaction data validation (non-empty entries)
-- `Blockchain`:
-  - ordered block list
-  - chain validation (hash integrity + linkage + transaction sanity)
-  - appending transaction blocks
-  - balance calculation by parsing transaction strings
-- `WalletManager` and `Wallet`:
-  - in-memory wallet registry
-  - per-wallet transaction history
-  - optional key pair attachment
-- `Key`:
-  - RSA-like key pair generation primitives
-  - derived integer wallet address for public keys
-- `ValidationResult`:
-  - immutable result object for chain validation
-
-### Storage
-File: `src/main/java/seedu/duke/storage/BlockchainStorage.java`
-- Persists blockchain to `data/blockchain.json`
-- Loads JSON, reconstructs block list, and validates chain
-- Uses an internal lightweight JSON parser (no external JSON dependency)
-
-## Key Implementation Details
-
-### Transaction Format and Balance Computation
-`Blockchain` parses transactions using:
+### Transaction and balance logic
+Transactions are represented in this format:
 `sender -> receiver : amount`
 
-`getPreciseBalance(walletName)` scans all blocks and applies:
-- subtraction when wallet is sender
-- addition when wallet is receiver
+Balance for a wallet is computed by scanning all transactions:
+- subtract amount when wallet is sender
+- add amount when wallet is receiver
 
-### `SendCommand` Parsing Strategy
-`SendCommand` uses prefix tokenization with:
-- `w/`, `to/`, `amt/`, `speed/`, `fee/`, `note/`
+### `send` command implementation
+`SendCommand` uses prefix-based argument parsing:
+- required: `w/`, `to/`, `amt/`
+- optional: `speed/`, `fee/`, `note/`
 
-Validation flow:
-1. parse required prefixes
-1. validate wallet existence
-1. validate amount
-1. validate recipient address format
-1. resolve fee (manual or speed-based)
-1. verify sufficient balance (`amount + fee`)
-1. append transactions to blockchain
+Validation sequence:
+1. parse prefixes
+2. verify wallet exists
+3. verify amount > 0
+4. validate recipient address format
+5. resolve fee (manual or speed-based)
+6. verify sufficient balance (`amount + fee`)
+7. append transfer transaction and optional network-fee transaction
 
-The command writes one transfer transaction and optionally one network-fee transaction to `network-fee`.
+### Persistence implementation
+- `BlockchainStorage` serializes blockchain state to JSON.
+- On startup, `Duke` attempts to load and validate persisted data.
+- If loading fails, a default blockchain is initialized.
+- Wallets are currently in-memory only and are not persisted.
 
-### Blockchain Validation
-`validate()` checks:
-1. each block hash matches recomputed hash
-1. transaction data is non-empty and non-blank
-1. each block links to previous block hash
-1. genesis previous hash equals constant seed value
+### Suggested UML diagrams (update this plz)
+- Class diagram: `Command` hierarchy, `Parser`, `Duke`, model classes.
+- Sequence diagram: end-to-end execution of `send`.
+- Sequence diagram: validation flow in `validate`.
 
-## Data Model Notes
-- Blockchain is persistent.
-- Wallets are currently session-only (not stored on disk).
-- Because of this separation, persisted historical transactions may reference wallet names that are not currently present in `WalletManager`.
+## Product scope
 
-## Build and Test
+### Target user profile
+- Students and beginners learning blockchain fundamentals through a terminal-based workflow.
+- Users who prefer lightweight, text-based interaction instead of a GUI.
+- Developers who want a small Java codebase suitable for extension and experimentation.
 
-### Build
-```bash
-./gradlew clean shadowJar
-```
-Output artifact:
-- `build/libs/duke.jar`
+### Value proposition
+Crypto1010 provides a compact, practical environment to understand wallet transfers, block structure, hash linkage, and blockchain validation without requiring external infrastructure or a real network.
 
-### Run
-```bash
-./gradlew run
-```
+## User Stories
 
-### Unit Tests
-Run:
-```bash
-./gradlew test
-```
-
-Current test coverage includes:
-- `BalanceCommand`
-- `CreateCommand`
-- `ListCommand`
-- `SendCommand`
-- `ValidateCommand`
-- `ViewBlockCommand`
-- parser basic test (`ParserTest`)
-
-Not yet covered with dedicated tests:
-- `HelpCommand`
-- `ExitCommand`
-- `KeygenCommand`
-- `BlockchainStorage` and several model classes
+| Version | As a ... | I want to ... | So that I can ... |
+|--------|----------|---------------|------------------|
+| v1.0 | new user | view usage instructions | quickly learn available commands |
+| v1.0 | user | create wallets | simulate distinct senders and receivers |
+| v1.0 | user | list wallets | confirm available wallets in the current session |
+| v1.0 | user | check wallet balance | verify transaction effects numerically |
+| v1.0 | user | send funds with fee controls | model transfer and fee trade-offs |
+| v1.0 | user | validate the blockchain | confirm chain integrity after modifications |
+| v1.0 | user | inspect a specific block | view exact block-level transaction data |
 
 ## Non-Functional Requirements
-- Language/runtime: Java 17
-- Interface: command-line only
-- Persistence: local JSON file in `data/`
-- Deterministic validation behavior for loaded chains
-- No external database dependency
+- The application shall run on Java 17.
+- The application shall be usable entirely via CLI input/output.
+- Blockchain data shall persist locally in `data/blockchain.json`.
+- Validation shall be deterministic for the same stored blockchain input.
+- The codebase shall remain modular enough to support adding new commands with minimal cross-component changes.
+- The project shall support automated unit testing via JUnit 5 and Gradle.
 
-## Manual Testing
-1. Start with a clean run: remove or back up `data/blockchain.json`.
-1. Run `./gradlew run`.
+## Glossary
+- Blockchain: Ordered chain of blocks linked by previous hashes.
+- Block: A unit containing index, timestamp, previous hash, current hash, and transactions.
+- Wallet: A logical identity used as sender/receiver in transactions.
+- Transaction: A transfer record in the format `sender -> receiver : amount`.
+- Validation: Integrity checks covering hash correctness, linkage, and transaction validity.
+- Network fee account: Internal sink (`network-fee`) receiving fee deductions from `send`.
+
+## Instructions for manual testing
+
+### Prerequisites
+- Java 17 installed and configured.
+- Project cloned locally.
+
+### Running the app
+1. Run `./gradlew run` (or `.\gradlew run` on Windows PowerShell).
+
+### Manual test cases
 1. Create wallets:
    - `create alice`
    - `create bob`
+   - Expected: confirmation messages for each wallet.
 1. List wallets:
    - `list`
-1. Check balances from default chain:
+   - Expected: numbered wallet list including `alice` and `bob`.
+1. Check balance:
    - `balance bob`
-1. Send valid transfer:
+   - Expected: balance displayed with 8 decimal places.
+1. Successful transfer:
    - `send w/bob to/0x1111111111111111111111111111111111111111 amt/1`
+   - Expected: success output including wallet, recipient, amount, speed, and fee.
+1. Invalid transfer format:
+   - `send invalid`
+   - Expected: invalid send format error.
+1. Invalid recipient address:
+   - `send w/bob to/not-an-address amt/1`
+   - Expected: invalid recipient address error.
 1. Validate chain:
    - `validate`
-1. Inspect the new block:
-   - `viewblock 2` (or latest index)
+   - Expected: valid-chain success message unless data is corrupted.
+1. View block details:
+   - `viewblock 1`
+   - Expected: full block metadata and transaction list.
+1. Out-of-range block:
+   - `viewblock 999`
+   - Expected: block index out of range error.
 1. Exit:
    - `exit`
-1. Restart and confirm blockchain persistence with `viewblock`.
+   - Expected: program terminates and blockchain state is saved.
 
-## Known Limitations
-- Wallets are not persisted.
-- Recipient selection is address-based only; no wallet-name-to-address lookup command exists.
-- `send` validates address format but does not verify on-chain ownership.
+### Data reset / test isolation
+- Delete or replace `data/blockchain.json` to reset blockchain state between manual test runs.
+
