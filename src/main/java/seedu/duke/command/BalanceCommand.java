@@ -9,7 +9,7 @@ import java.math.RoundingMode;
 public class BalanceCommand extends Command {
     private static final String HELP_DESCRIPTION = """
             Format: balance w/WALLET_NAME
-            Example: balance w/Bob's Wallet
+            Example: balance w/main_wallet
             
             Displays the balance of wallet up to 8 decimal points
             """;

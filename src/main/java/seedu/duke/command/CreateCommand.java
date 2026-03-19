@@ -8,10 +8,10 @@ import seedu.duke.model.WalletManager;
 public class CreateCommand extends Command {
     private static final String HELP_DESCRIPTION = """
             Format: create w/WALLET_NAME
-            Example: create w/Bob's Wallet
+            Example: create w/main_wallet
             
             Creates a wallet with the associated NAME
-            NAME must consist only of alphanumeric characters
+            NAME must consist only of alphanumeric characters and cannot include spaces
             """;
   
     private static final String NAME_ERROR = "Error: wallet name cannot be empty.";
