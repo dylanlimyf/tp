@@ -36,6 +36,16 @@ class KeygenCommandTest {
         assertEquals("Error: Invalid keygen format. Use: keygen w/WALLET_NAME", exception.getMessage());
     }
 
+    @Test
+    void execute_emptyWalletName_throwsException() {
+        Blockchain blockchain = Blockchain.createDefault();
+        WalletManager walletManager = new WalletManager();
+        KeygenCommand command = new KeygenCommand("w/", walletManager);
+
+        Exceptions exception = assertThrows(Exceptions.class, () -> command.execute(blockchain));
+        assertEquals("Error: wallet name cannot be empty.", exception.getMessage());
+    }
+
     private String runCommand(Command command, Blockchain blockchain) throws Exceptions {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream originalOut = System.out;
