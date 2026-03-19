@@ -1,21 +1,12 @@
 package seedu.crypto1010;
 
-<<<<<<< HEAD:src/main/java/seedu/duke/Duke.java
-import seedu.duke.command.Command;
-import seedu.duke.command.ExitCommand;
-import seedu.duke.exceptions.Exceptions;
-import seedu.duke.model.Blockchain;
-import seedu.duke.model.WalletManager;
-import seedu.duke.storage.BlockchainStorage;
-import seedu.duke.storage.WalletStorage;
-=======
 import seedu.crypto1010.command.Command;
 import seedu.crypto1010.command.ExitCommand;
 import seedu.crypto1010.exceptions.Exceptions;
 import seedu.crypto1010.model.Blockchain;
 import seedu.crypto1010.model.WalletManager;
 import seedu.crypto1010.storage.BlockchainStorage;
->>>>>>> upstream/master:src/main/java/seedu/crypto1010/Crypto1010.java
+import seedu.crypto1010.storage.WalletStorage;
 
 import java.io.IOException;
 import java.util.NoSuchElementException;
@@ -36,16 +27,10 @@ public class Crypto1010 {
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
         printWelcome();
-<<<<<<< HEAD:src/main/java/seedu/duke/Duke.java
-        BlockchainStorage blockchainStorage = new BlockchainStorage(Duke.class);
-        WalletStorage walletStorage = new WalletStorage(Duke.class);
+        BlockchainStorage blockchainStorage = new BlockchainStorage(Crypto1010.class);
+        WalletStorage walletStorage = new WalletStorage(Crypto1010.class);
         Blockchain blockchain = loadBlockchain(blockchainStorage);
         WalletManager walletManager = loadWalletManager(walletStorage);
-=======
-        BlockchainStorage storage = new BlockchainStorage(Crypto1010.class);
-        Blockchain blockchain = loadBlockchain(storage);
-        WalletManager walletManager = new WalletManager();
->>>>>>> upstream/master:src/main/java/seedu/crypto1010/Crypto1010.java
         Parser parser = new Parser(walletManager);
 
         while (true) {

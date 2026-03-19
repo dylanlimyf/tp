@@ -1,10 +1,10 @@
-package seedu.duke.storage;
+package seedu.crypto1010.storage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import seedu.duke.model.Wallet;
-import seedu.duke.model.WalletManager;
+import seedu.crypto1010.model.Wallet;
+import seedu.crypto1010.model.WalletManager;
 
 import java.io.IOException;
 import java.nio.file.Files;

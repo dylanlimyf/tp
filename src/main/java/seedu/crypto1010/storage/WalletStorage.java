@@ -1,7 +1,7 @@
-package seedu.duke.storage;
+package seedu.crypto1010.storage;
 
-import seedu.duke.model.Wallet;
-import seedu.duke.model.WalletManager;
+import seedu.crypto1010.model.Wallet;
+import seedu.crypto1010.model.WalletManager;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
