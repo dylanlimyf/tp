@@ -71,7 +71,7 @@ class BalanceCommandTest {
         BalanceCommand command = new BalanceCommand("w/   ");
 
         Exceptions exception = assertThrows(Exceptions.class, () -> command.execute(blockchain));
-        assertEquals("Error: wallet name cannot be empty.", exception.getMessage());
+        assertEquals("Error: wallet name cannot be empty. Use: balance w/WALLET_NAME", exception.getMessage());
     }
 
     @Test
@@ -89,7 +89,8 @@ class BalanceCommandTest {
         BalanceCommand command = new BalanceCommand("w/alice bob");
 
         Exceptions exception = assertThrows(Exceptions.class, () -> command.execute(blockchain));
-        assertEquals("Error: wallet name must be one word without spaces.", exception.getMessage());
+        assertEquals("Error: wallet name must be one word without spaces. Use: balance w/WALLET_NAME",
+            exception.getMessage());
     }
 
     private String runCommand(Command command, Blockchain blockchain) {

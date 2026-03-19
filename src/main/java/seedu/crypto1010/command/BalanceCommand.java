@@ -16,6 +16,7 @@ public class BalanceCommand extends Command {
     private static final String NAME_ERROR = "Error: wallet name cannot be empty.";
     private static final String NAME_WHITESPACE_ERROR = "Error: wallet name must be one word without spaces.";
     private static final String INVALID_FORMAT_ERROR = "Error: Invalid balance format. Use: balance w/WALLET_NAME";
+    private static final String BALANCE_FORMAT = "Use: balance w/WALLET_NAME";
 
     private final String arguments;
 
@@ -35,7 +36,7 @@ public class BalanceCommand extends Command {
 
     private String parseArguments(String args) throws Exceptions {
         if (args == null || args.isBlank()) {
-            throw new Exceptions(NAME_ERROR);
+            throw new Exceptions(NAME_ERROR + " " + BALANCE_FORMAT);
         }
 
         String trimmedArgs = args.trim();
@@ -45,10 +46,10 @@ public class BalanceCommand extends Command {
 
         String walletName = trimmedArgs.substring(2).trim();
         if (walletName.isEmpty()) {
-            throw new Exceptions(NAME_ERROR);
+            throw new Exceptions(NAME_ERROR + " " + BALANCE_FORMAT);
         }
         if (walletName.chars().anyMatch(Character::isWhitespace)) {
-            throw new Exceptions(NAME_WHITESPACE_ERROR);
+            throw new Exceptions(NAME_WHITESPACE_ERROR + " " + BALANCE_FORMAT);
         }
 
         return walletName;

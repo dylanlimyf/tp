@@ -1,6 +1,7 @@
 package seedu.crypto1010.command;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import seedu.crypto1010.exceptions.Exceptions;
 import seedu.crypto1010.model.Blockchain;
@@ -39,6 +40,16 @@ class ListCommandTest {
             "1. alice | Address: " + alice.getAddress(),
             "2. bob | Address: " + bob.getAddress()) + System.lineSeparator();
         assertEquals(expected, output);
+    }
+
+    @Test
+    void execute_withUnexpectedArguments_throwsFormatError() {
+        Blockchain blockchain = Blockchain.createDefault();
+        WalletManager walletManager = new WalletManager();
+        ListCommand command = new ListCommand(walletManager);
+
+        Exceptions exception = assertThrows(Exceptions.class, () -> command.execute("extra", blockchain));
+        assertEquals("Error: Invalid list format. Use: list", exception.getMessage());
     }
 
     private String runCommand(Command command, Blockchain blockchain) {

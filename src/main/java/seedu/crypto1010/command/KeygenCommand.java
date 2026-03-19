@@ -9,14 +9,15 @@ import seedu.crypto1010.model.WalletManager;
 public class KeygenCommand extends Command {
     private static final String HELP_DESCRIPTION = """
             Format: keygen w/WALLET_NAME
-            Example: keygen w/main_wallet
+            Example: keygen w/mainwallet
             
             Generates and displays key pair for new wallet, or regenerates for existing wallet
             Displays the process of creating a key pair
             """;
-    private static final String INVALID_WALLET_NUMBER_ERROR = "Error: Invalid number of args";
+    private static final String INVALID_WALLET_NUMBER_ERROR = "Error: Invalid keygen format."
+            + " Use: keygen w/WALLET_NAME";
     private static final String INVALID_FORMAT_ERROR = "Error: Invalid keygen format. Use: keygen w/WALLET_NAME";
-    private static final String NAME_ERROR = "Error: wallet name cannot be empty.";
+    private static final String NAME_ERROR = "Error: wallet name cannot be empty. Use: keygen w/WALLET_NAME";
     private static final String WALLET_NOT_FOUND_ERROR = "Error: Wallet not found";
     private static final String KEY_PAIR_GENERATION_SUCCESSFUL = "Key pair successfully generated";
 
@@ -48,7 +49,7 @@ public class KeygenCommand extends Command {
             throw new Exceptions(INVALID_WALLET_NUMBER_ERROR);
         } else if (parts[0].startsWith("w/")) {
             String walletName = parts[0].substring(2).trim();
-            if (walletName.isEmpty()) {
+            if (walletName.isEmpty() || walletName.chars().anyMatch(Character::isWhitespace)) {
                 throw new Exceptions(NAME_ERROR);
             }
             return walletName;

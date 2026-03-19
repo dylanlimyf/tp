@@ -43,7 +43,7 @@ class KeygenCommandTest {
         KeygenCommand command = new KeygenCommand("w/", walletManager);
 
         Exceptions exception = assertThrows(Exceptions.class, () -> command.execute(blockchain));
-        assertEquals("Error: wallet name cannot be empty.", exception.getMessage());
+        assertEquals("Error: wallet name cannot be empty. Use: keygen w/WALLET_NAME", exception.getMessage());
     }
 
     private String runCommand(Command command, Blockchain blockchain) throws Exceptions {

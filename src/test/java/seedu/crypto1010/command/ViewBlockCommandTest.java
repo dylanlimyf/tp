@@ -36,7 +36,7 @@ class ViewBlockCommandTest {
         ViewBlockCommand command = new ViewBlockCommand("-1");
 
         Exceptions exception = assertThrows(Exceptions.class, () -> command.execute(blockchain));
-        assertEquals("Error: INDEX must be a non-negative integer.", exception.getMessage());
+        assertEquals("Error: INDEX must be a non-negative integer. Use: viewblock INDEX", exception.getMessage());
     }
 
     @Test
@@ -45,7 +45,7 @@ class ViewBlockCommandTest {
         ViewBlockCommand command = new ViewBlockCommand("abc");
 
         Exceptions exception = assertThrows(Exceptions.class, () -> command.execute(blockchain));
-        assertEquals("Error: INDEX must be a non-negative integer.", exception.getMessage());
+        assertEquals("Error: INDEX must be a non-negative integer. Use: viewblock INDEX", exception.getMessage());
     }
 
     @Test

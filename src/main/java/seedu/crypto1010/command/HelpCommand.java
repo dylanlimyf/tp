@@ -15,6 +15,7 @@ public class HelpCommand extends Command {
             """;
     private static final String HELP_MESSAGE =
             "For more details about each command type 'help c/COMMAND', eg. 'help c/list'";
+    private static final String INVALID_FORMAT_ERROR = "Error: Invalid help format. Use: help [c/COMMAND]";
 
     public HelpCommand() {
         super(HELP_DESCRIPTION);
@@ -24,9 +25,13 @@ public class HelpCommand extends Command {
     public void execute(String description, Blockchain blockchain) {
         WalletManager walletManager = new WalletManager();
         Parser parser = new Parser(walletManager);
-        String[] components = description.split("c/");
+
         try {
-            if (components.length < 2) {
+            String trimmedDescription = description == null ? "" : description.trim();
+            if ("help".equalsIgnoreCase(trimmedDescription)) {
+                trimmedDescription = "";
+            }
+            if (trimmedDescription.isEmpty()) {
                 for (CommandWord c : CommandWord.values()) {
                     assert c.getCommand() != null : "command word should have a command";
                     assert c.getDescription() != null : "command word should have a description";
@@ -40,11 +45,22 @@ public class HelpCommand extends Command {
                 }
                 System.out.println(HELP_MESSAGE);
             } else {
-                Command c = parser.parse(components[1]);
-                c.displayHelpDescription();
+                if (!trimmedDescription.startsWith("c/")) {
+                    System.out.println(INVALID_FORMAT_ERROR);
+                    return;
+                }
+
+                String commandName = trimmedDescription.substring(2).trim();
+                if (commandName.isEmpty() || commandName.chars().anyMatch(Character::isWhitespace)) {
+                    System.out.println(INVALID_FORMAT_ERROR);
+                    return;
+                }
+
+                Command c = parser.parse(commandName);
+                System.out.println(c.getFormatLine());
             }
         } catch (IllegalArgumentException e) {
-            System.out.println("Please input a valid command, use 'help' to see the list of commands");
+            System.out.println(INVALID_FORMAT_ERROR);
         }
     }
 }

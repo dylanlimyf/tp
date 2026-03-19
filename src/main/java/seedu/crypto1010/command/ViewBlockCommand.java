@@ -14,7 +14,8 @@ public class ViewBlockCommand extends Command {
             Details include: Block Index, Timestamp, Previous Hash, Current Hash and List of Transactions
             """;
 
-    private static final String INDEX_PARSE_ERROR = "Error: INDEX must be a non-negative integer.";
+    private static final String INDEX_PARSE_ERROR = "Error: INDEX must be a non-negative integer."
+            + " Use: viewblock INDEX";
     private static final String INDEX_RANGE_ERROR = "Error: Block index out of range.";
 
     private final String indexText;

@@ -73,7 +73,9 @@ class SendCommandTest {
         SendCommand command = new SendCommand("w/bob to/" + ETH_ADDRESS + " amt/-5", walletManager);
 
         Exceptions exception = assertThrows(Exceptions.class, () -> command.execute(blockchain));
-        assertEquals("Error: Amount must be a positive number.", exception.getMessage());
+        assertEquals("Error: Amount must be a positive number. Use: send w/WALLET_NAME"
+            + " to/RECIPIENT_ADDRESS amt/AMOUNT [speed/SPEED] [fee/FEE] [note/MEMO]",
+            exception.getMessage());
     }
 
     @Test
@@ -113,7 +115,9 @@ class SendCommandTest {
         SendCommand command = new SendCommand("w/bob to/not-an-address amt/1", walletManager);
 
         Exceptions exception = assertThrows(Exceptions.class, () -> command.execute(blockchain));
-        assertEquals("Error: Invalid recipient address.", exception.getMessage());
+        assertEquals("Error: Invalid recipient address. Use: send w/WALLET_NAME"
+            + " to/RECIPIENT_ADDRESS amt/AMOUNT [speed/SPEED] [fee/FEE] [note/MEMO]",
+            exception.getMessage());
     }
 
     @Test
@@ -124,7 +128,9 @@ class SendCommandTest {
         SendCommand command = new SendCommand("w/bob to/" + ETH_ADDRESS + " amt/1 speed/urgent", walletManager);
 
         Exceptions exception = assertThrows(Exceptions.class, () -> command.execute(blockchain));
-        assertEquals("Error: Unsupported speed. Use slow, standard, or fast.", exception.getMessage());
+        assertEquals("Error: Unsupported speed. Use speed/slow, speed/standard, or speed/fast."
+            + " Use: send w/WALLET_NAME to/RECIPIENT_ADDRESS amt/AMOUNT [speed/SPEED]"
+            + " [fee/FEE] [note/MEMO]", exception.getMessage());
     }
 
     @Test
@@ -135,7 +141,9 @@ class SendCommandTest {
         SendCommand command = new SendCommand("w/bob to/" + ETH_ADDRESS + " amt/1 fee/-0.1", walletManager);
 
         Exceptions exception = assertThrows(Exceptions.class, () -> command.execute(blockchain));
-        assertEquals("Error: Fee must be a non-negative number.", exception.getMessage());
+        assertEquals("Error: Fee must be a non-negative number. Use: send w/WALLET_NAME"
+            + " to/RECIPIENT_ADDRESS amt/AMOUNT [speed/SPEED] [fee/FEE] [note/MEMO]",
+            exception.getMessage());
     }
 
     @Test

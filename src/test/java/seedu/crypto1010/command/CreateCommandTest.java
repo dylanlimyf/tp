@@ -33,7 +33,7 @@ class CreateCommandTest {
         CreateCommand command = new CreateCommand("w/   ", walletManager);
 
         Exceptions exception = assertThrows(Exceptions.class, () -> command.execute(blockchain));
-        assertEquals("Error: wallet name cannot be empty.", exception.getMessage());
+        assertEquals("Error: wallet name cannot be empty. Use: create w/WALLET_NAME", exception.getMessage());
         assertEquals(0, walletManager.getWallets().size());
     }
 
@@ -67,7 +67,8 @@ class CreateCommandTest {
         CreateCommand command = new CreateCommand("w/alice bob", walletManager);
 
         Exceptions exception = assertThrows(Exceptions.class, () -> command.execute(blockchain));
-        assertEquals("Error: wallet name must be one word without spaces.", exception.getMessage());
+        assertEquals("Error: wallet name must be one word without spaces. Use: create w/WALLET_NAME",
+            exception.getMessage());
         assertEquals(0, walletManager.getWallets().size());
     }
 

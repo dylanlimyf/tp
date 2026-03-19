@@ -48,7 +48,28 @@ public class HelpCommandTest {
 
         String output = outputStream.toString();
         assertTrue(output.contains(
-                "Please input a valid command, use 'help' to see the list of commands"
+                "Error: Invalid help format. Use: help [c/COMMAND]"
+        ));
+    }
+
+    @Test
+    public void execute_helpForSpecificCommand_showsCommandFormat() {
+        HelpCommand helpCommand = new HelpCommand();
+        Blockchain blockchain = Blockchain.createDefault();
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outputStream));
+
+        try {
+            helpCommand.execute("c/send", blockchain);
+        } finally {
+            System.setOut(originalOut);
+        }
+
+        String output = outputStream.toString();
+        assertTrue(output.contains(
+                "Format: send w/WALLET_NAME to/RECIPIENT_ADDRESS amt/AMOUNT [speed/SPEED] [fee/FEE] [note/MEMO]"
         ));
     }
 }

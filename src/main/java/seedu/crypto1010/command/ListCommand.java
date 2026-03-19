@@ -16,6 +16,7 @@ public class ListCommand extends Command {
             """;
   
     private static final String NO_WALLETS_MESSAGE = "No wallets found.";
+    private static final String INVALID_FORMAT_ERROR = "Error: Invalid list format. Use: list";
 
     private final WalletManager walletManager;
   
@@ -26,6 +27,10 @@ public class ListCommand extends Command {
 
     @Override
     public void execute(String description, Blockchain blockchain) throws Exceptions {
+        if (description != null && !description.isBlank()) {
+            throw new Exceptions(INVALID_FORMAT_ERROR);
+        }
+
         List<Wallet> wallets = walletManager.getWallets();
         if (wallets.isEmpty()) {
             System.out.println(NO_WALLETS_MESSAGE);

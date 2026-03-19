@@ -18,6 +18,7 @@ public class CreateCommand extends Command {
     private static final String NAME_WHITESPACE_ERROR = "Error: wallet name must be one word without spaces.";
     private static final String DUPLICATE_ERROR = "Error: wallet name already exists.";
     private static final String INVALID_FORMAT_ERROR = "Error: Invalid create format. Use: create w/WALLET_NAME";
+    private static final String CREATE_FORMAT = "Use: create w/WALLET_NAME";
 
     private final String arguments;
     private final WalletManager walletManager;
@@ -32,7 +33,7 @@ public class CreateCommand extends Command {
     public void execute(String description, Blockchain blockchain) throws Exceptions {
         String walletName = parseArguments(arguments);
         if (walletName == null || walletName.isBlank()) {
-            throw new Exceptions(NAME_ERROR);
+            throw new Exceptions(NAME_ERROR + " " + CREATE_FORMAT);
         }
 
         String trimmedWalletName = walletName.trim();
@@ -46,7 +47,7 @@ public class CreateCommand extends Command {
 
     private String parseArguments(String args) throws Exceptions {
         if (args == null || args.isBlank()) {
-            throw new Exceptions(NAME_ERROR);
+            throw new Exceptions(NAME_ERROR + " " + CREATE_FORMAT);
         }
 
         String trimmedArgs = args.trim();
@@ -55,8 +56,11 @@ public class CreateCommand extends Command {
         }
 
         String walletName = trimmedArgs.substring(2).trim();
+        if (walletName.isEmpty()) {
+            throw new Exceptions(NAME_ERROR + " " + CREATE_FORMAT);
+        }
         if (walletName.chars().anyMatch(Character::isWhitespace)) {
-            throw new Exceptions(NAME_WHITESPACE_ERROR);
+            throw new Exceptions(NAME_WHITESPACE_ERROR + " " + CREATE_FORMAT);
         }
 
         return walletName;

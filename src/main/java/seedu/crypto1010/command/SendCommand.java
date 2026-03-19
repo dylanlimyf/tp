@@ -37,10 +37,13 @@ public class SendCommand extends Command {
             """;
     private static final String INVALID_FORMAT_ERROR = "Error: Invalid send format. Use: send w/WALLET_NAME"
         + " to/RECIPIENT_ADDRESS amt/AMOUNT [speed/SPEED] [fee/FEE] [note/MEMO]";
+    private static final String SEND_FORMAT = "Use: send w/WALLET_NAME"
+            + " to/RECIPIENT_ADDRESS amt/AMOUNT [speed/SPEED] [fee/FEE] [note/MEMO]";
     private static final String WALLET_NOT_FOUND_ERROR = "Error: Wallet not found.";
     private static final String AMOUNT_INVALID_ERROR = "Error: Amount must be a positive number.";
     private static final String FEE_INVALID_ERROR = "Error: Fee must be a non-negative number.";
-    private static final String SPEED_INVALID_ERROR = "Error: Unsupported speed. Use slow, standard, or fast.";
+    private static final String SPEED_INVALID_ERROR = "Error: Unsupported speed. Use speed/slow, speed/standard,"
+            + " or speed/fast.";
     private static final String INSUFFICIENT_BALANCE_ERROR = "Error: Insufficient balance.";
     private static final String INVALID_ADDRESS_ERROR = "Error: Invalid recipient address.";
 
@@ -65,21 +68,21 @@ public class SendCommand extends Command {
 
         BigDecimal amount = parseDecimal(parsed.amount);
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new Exceptions(AMOUNT_INVALID_ERROR);
+            throw new Exceptions(AMOUNT_INVALID_ERROR + " " + SEND_FORMAT);
         }
 
         if (!isValidAddress(parsed.recipientAddress)) {
-            throw new Exceptions(INVALID_ADDRESS_ERROR);
+            throw new Exceptions(INVALID_ADDRESS_ERROR + " " + SEND_FORMAT);
         }
 
         String speed = parsed.speed == null ? DEFAULT_SPEED : parsed.speed.toLowerCase();
         if (!isSupportedSpeed(speed)) {
-            throw new Exceptions(SPEED_INVALID_ERROR);
+            throw new Exceptions(SPEED_INVALID_ERROR + " " + SEND_FORMAT);
         }
 
         BigDecimal fee = resolveFee(parsed.fee, speed);
         if (fee == null) {
-            throw new Exceptions(FEE_INVALID_ERROR);
+            throw new Exceptions(FEE_INVALID_ERROR + " " + SEND_FORMAT);
         }
 
         BigDecimal balance = blockchain.getPreciseBalance(parsed.walletName);

@@ -10,6 +10,7 @@ public class ValidateCommand extends Command {
             
             Validates entire blockchain integrity
             """;
+    private static final String INVALID_FORMAT_ERROR = "Error: Invalid validate format. Use: validate";
 
     public ValidateCommand() {
         super(HELP_DESCRIPTION);
@@ -17,6 +18,10 @@ public class ValidateCommand extends Command {
 
     @Override
     public void execute(String description, Blockchain blockchain) throws Exceptions {
+        if (description != null && !description.isBlank()) {
+            throw new Exceptions(INVALID_FORMAT_ERROR);
+        }
+
         ValidationResult result = blockchain.validate();
         if (result.isValid()) {
             System.out.println("Blockchain is valid. All blocks verified successfully.");
