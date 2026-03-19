@@ -42,6 +42,10 @@ public class Wallet {
         this.privateKey = keys[1];
     }
 
+    public boolean hasGeneratedKeys() {
+        return publicKey != null && privateKey != null;
+    }
+
     private String generateAddress(String walletName) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");

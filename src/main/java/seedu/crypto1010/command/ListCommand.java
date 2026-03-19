@@ -17,6 +17,7 @@ public class ListCommand extends Command {
   
     private static final String NO_WALLETS_MESSAGE = "No wallets found.";
     private static final String INVALID_FORMAT_ERROR = "Error: Invalid list format. Use: list";
+    private static final String GENERATE_KEYS_FIRST = "Generate keys first";
 
     private final WalletManager walletManager;
   
@@ -40,7 +41,8 @@ public class ListCommand extends Command {
         System.out.println("Wallets:");
         for (int i = 0; i < wallets.size(); i++) {
             Wallet wallet = wallets.get(i);
-            System.out.println((i + 1) + ". " + wallet.getName() + " | Address: " + wallet.getAddress());
+            String addressDisplay = wallet.hasGeneratedKeys() ? wallet.getAddress() : GENERATE_KEYS_FIRST;
+            System.out.println((i + 1) + ". " + wallet.getName() + " | Address: " + addressDisplay);
         }
     }
 }
