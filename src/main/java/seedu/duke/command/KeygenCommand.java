@@ -1,7 +1,5 @@
 package seedu.duke.command;
 
-import java.util.List;
-
 import seedu.duke.exceptions.Exceptions;
 import seedu.duke.model.Blockchain;
 import seedu.duke.model.Key;
@@ -32,21 +30,11 @@ public class KeygenCommand extends Command {
 
     @Override
     public void execute(String description, Blockchain blockchain) throws Exceptions {
-        // Parse wallet name
         String walletName = parseArguments(arguments);
-
-        // Validate wallet exists
-        if (!walletManager.hasWallet(walletName)) {
-            throw new Exceptions(WALLET_NOT_FOUND_ERROR);
-        }
-
-        List<Wallet> wallets = walletManager.getWallets();
-        for (Wallet wallet : wallets) {
-            if (wallet.getName().equals(walletName)) {
-                wallet.setKeys(Key.generateKeyPair());
-                System.out.println(KEY_PAIR_GENERATION_SUCCESSFUL);
-            }
-        }
+        Wallet wallet = walletManager.findWallet(walletName)
+                .orElseThrow(() -> new Exceptions(WALLET_NOT_FOUND_ERROR));
+        wallet.setKeys(Key.generateKeyPair());
+        System.out.println(KEY_PAIR_GENERATION_SUCCESSFUL);
     }
 
     private String parseArguments(String args) throws Exceptions{
