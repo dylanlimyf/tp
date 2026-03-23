@@ -93,8 +93,7 @@ public class SendCommand extends Command {
 
         String receiverAccount = walletManager.findWalletByAddress(parsed.recipientAddress)
                 .map(Wallet::getName)
-                .orElseThrow(() -> new Exceptions("Error: No wallet found with address "
-                                                          + parsed.recipientAddress + "."));
+                .orElse(parsed.recipientAddress);
 
         List<String> transactions = new ArrayList<>();
         transactions.add(formatTransaction(parsed.walletName, receiverAccount, amount));

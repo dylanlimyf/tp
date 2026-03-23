@@ -8,7 +8,8 @@ import java.util.Objects;
 import seedu.crypto1010.exceptions.Exceptions;
 
 public class Wallet {
-    private final String NO_ADDRESS_ERROR = "Wallet has no address yet. Run keygen w/WALLET_NAME first.";
+    private final static String NO_ADDRESS_ERROR = "Generate keys first";
+
     private final String name;
     private final List<String> transactionHistory;
     private String address;
