@@ -20,17 +20,23 @@ public class Key {
     private final BigInteger modulus;
     private final BigInteger exponent;
     private final boolean isPublic;
-    private final int walletAddress;
+    private final String walletAddress;
 
     public Key(BigInteger modulus, BigInteger exponent, boolean isPublic) throws Exceptions {
         this.modulus = modulus;
         this.exponent = exponent;
         this.isPublic = isPublic;
-        this.walletAddress = isPublic ? deriveAddress(modulus, exponent) : 0;
+        this.walletAddress = isPublic ? deriveAddress(modulus, exponent) : null;
     }
 
-    private static int deriveAddress(BigInteger modulus, BigInteger exponent) {
-        return Math.abs((modulus.add(exponent)).hashCode());
+    private static String deriveAddress(BigInteger modulus, BigInteger exponent) {
+        BigInteger combined = modulus.add(exponent);
+        // multiply by a large prime to spread bits, then take mod to get exactly 160 bits
+        BigInteger spread = combined.multiply(BigInteger.valueOf(6364136223846793005L))
+                .abs()
+                .mod(BigInteger.TWO.pow(160));
+        // pad to exactly 40 hex characters
+        return "0x" + String.format("%040x", spread);
     }
 
     public BigInteger getModulus() {
@@ -45,7 +51,7 @@ public class Key {
         return isPublic;
     }
 
-    public int getWalletAddress() {
+    public String getWalletAddress() {
         return walletAddress;
     }
 

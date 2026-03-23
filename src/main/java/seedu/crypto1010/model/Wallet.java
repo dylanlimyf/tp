@@ -1,23 +1,23 @@
 package seedu.crypto1010.model;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import seedu.crypto1010.exceptions.Exceptions;
+
 public class Wallet {
+    private final String NO_ADDRESS_ERROR = "Wallet has no address yet. Run keygen w/WALLET_NAME first.";
     private final String name;
-    private final String address;
     private final List<String> transactionHistory;
+    private String address;
     private Key publicKey;
     private Key privateKey;
 
     public Wallet(String name) {
         this.name = Objects.requireNonNull(name).trim();
-        this.address = generateAddress(this.name);
+        this.address = null; //set after keygen
         this.transactionHistory = new ArrayList<>();
     }
 
@@ -25,8 +25,15 @@ public class Wallet {
         return name;
     }
 
-    public String getAddress() {
+    public String getAddress() throws Exceptions {
+        if (address == null) {
+            throw new Exceptions(NO_ADDRESS_ERROR);
+        }
         return address;
+    }
+
+    public boolean hasGeneratedKeys() {
+        return publicKey != null && privateKey != null;
     }
 
     public void addTransaction(String transactionEntry) {
@@ -40,16 +47,7 @@ public class Wallet {
     public void setKeys(Key[] keys) {
         this.publicKey = keys[0];
         this.privateKey = keys[1];
-    }
-
-    private String generateAddress(String walletName) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(walletName.toLowerCase().getBytes(StandardCharsets.UTF_8));
-            return "0x" + bytesToHex(hash).substring(0, 40);
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("SHA-256 algorithm unavailable", e);
-        }
+        address = publicKey.getWalletAddress();
     }
 
     private String bytesToHex(byte[] hashBytes) {
