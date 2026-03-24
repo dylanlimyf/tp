@@ -3,7 +3,7 @@ package seedu.crypto1010.command;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import seedu.crypto1010.exceptions.Exceptions;
+import seedu.crypto1010.exceptions.Crypto1010Exception;
 import seedu.crypto1010.model.Blockchain;
 import seedu.crypto1010.model.WalletManager;
 
@@ -32,7 +32,7 @@ class CreateCommandTest {
         WalletManager walletManager = new WalletManager();
         CreateCommand command = new CreateCommand("w/   ", walletManager);
 
-        Exceptions exception = assertThrows(Exceptions.class, () -> command.execute(blockchain));
+        Crypto1010Exception exception = assertThrows(Crypto1010Exception.class, () -> command.execute(blockchain));
         assertEquals("Error: wallet name cannot be empty. Use: create w/WALLET_NAME", exception.getMessage());
         assertEquals(0, walletManager.getWallets().size());
     }
@@ -44,7 +44,7 @@ class CreateCommandTest {
         walletManager.createWallet("alice");
         CreateCommand command = new CreateCommand("w/alice", walletManager);
 
-        Exceptions exception = assertThrows(Exceptions.class, () -> command.execute(blockchain));
+        Crypto1010Exception exception = assertThrows(Crypto1010Exception.class, () -> command.execute(blockchain));
         assertEquals("Error: wallet name already exists.", exception.getMessage());
         assertEquals(1, walletManager.getWallets().size());
     }
@@ -55,7 +55,7 @@ class CreateCommandTest {
         WalletManager walletManager = new WalletManager();
         CreateCommand command = new CreateCommand("alice", walletManager);
 
-        Exceptions exception = assertThrows(Exceptions.class, () -> command.execute(blockchain));
+        Crypto1010Exception exception = assertThrows(Crypto1010Exception.class, () -> command.execute(blockchain));
         assertEquals("Error: Invalid create format. Use: create w/WALLET_NAME", exception.getMessage());
         assertEquals(0, walletManager.getWallets().size());
     }
@@ -66,7 +66,7 @@ class CreateCommandTest {
         WalletManager walletManager = new WalletManager();
         CreateCommand command = new CreateCommand("w/alice bob", walletManager);
 
-        Exceptions exception = assertThrows(Exceptions.class, () -> command.execute(blockchain));
+        Crypto1010Exception exception = assertThrows(Crypto1010Exception.class, () -> command.execute(blockchain));
         assertEquals("Error: wallet name must be one word without spaces. Use: create w/WALLET_NAME",
             exception.getMessage());
         assertEquals(0, walletManager.getWallets().size());
@@ -78,7 +78,7 @@ class CreateCommandTest {
         System.setOut(new PrintStream(outputStream));
         try {
             command.execute(blockchain);
-        } catch (Exceptions e) {
+        } catch (Crypto1010Exception e) {
             throw new RuntimeException(e);
         } finally {
             System.setOut(originalOut);

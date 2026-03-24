@@ -1,6 +1,6 @@
 package seedu.crypto1010.command;
 
-import seedu.crypto1010.exceptions.Exceptions;
+import seedu.crypto1010.exceptions.Crypto1010Exception;
 import seedu.crypto1010.model.Blockchain;
 import seedu.crypto1010.model.Wallet;
 import seedu.crypto1010.model.WalletManager;
@@ -27,9 +27,9 @@ public class ListCommand extends Command {
     }
 
     @Override
-    public void execute(String description, Blockchain blockchain) throws Exceptions {
+    public void execute(String description, Blockchain blockchain) throws Crypto1010Exception {
         if (description != null && !description.isBlank()) {
-            throw new Exceptions(INVALID_FORMAT_ERROR);
+            throw new Crypto1010Exception(INVALID_FORMAT_ERROR);
         }
 
         List<Wallet> wallets = walletManager.getWallets();
@@ -44,7 +44,7 @@ public class ListCommand extends Command {
             System.out.print((i + 1) + ". " + wallet.getName() + " | Address: ");
             try {
                 System.out.println(wallet.getAddress());
-            } catch (Exceptions e) {
+            } catch (Crypto1010Exception e) {
                 System.out.println(e.getMessage());
             }
         }

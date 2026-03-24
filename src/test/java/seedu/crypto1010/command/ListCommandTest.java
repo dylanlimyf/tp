@@ -3,7 +3,7 @@ package seedu.crypto1010.command;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import seedu.crypto1010.exceptions.Exceptions;
+import seedu.crypto1010.exceptions.Crypto1010Exception;
 import seedu.crypto1010.model.Blockchain;
 import seedu.crypto1010.model.Key;
 import seedu.crypto1010.model.Wallet;
@@ -28,7 +28,7 @@ class ListCommandTest {
     }
 
     @Test
-    void execute_existingWallets_printsWalletNames() throws Exceptions {
+    void execute_existingWallets_printsWalletNames() throws Crypto1010Exception {
         Blockchain blockchain = Blockchain.createDefault();
         WalletManager walletManager = new WalletManager();
         walletManager.createWallet("alice");
@@ -45,7 +45,7 @@ class ListCommandTest {
     }
 
     @Test
-    void execute_walletWithGeneratedKeys_printsAddress() throws Exceptions {
+    void execute_walletWithGeneratedKeys_printsAddress() throws Crypto1010Exception {
         Blockchain blockchain = Blockchain.createDefault();
         WalletManager walletManager = new WalletManager();
         Wallet alice = walletManager.createWallet("alice");
@@ -68,7 +68,8 @@ class ListCommandTest {
         WalletManager walletManager = new WalletManager();
         ListCommand command = new ListCommand(walletManager);
 
-        Exceptions exception = assertThrows(Exceptions.class, () -> command.execute("extra", blockchain));
+        Crypto1010Exception exception = assertThrows(Crypto1010Exception.class,
+                () -> command.execute("extra", blockchain));
         assertEquals("Error: Invalid list format. Use: list", exception.getMessage());
     }
 
@@ -78,7 +79,7 @@ class ListCommandTest {
         System.setOut(new PrintStream(outputStream));
         try {
             command.execute(blockchain);
-        } catch (Exceptions e) {
+        } catch (Crypto1010Exception e) {
             throw new RuntimeException(e);
         } finally {
             System.setOut(originalOut);

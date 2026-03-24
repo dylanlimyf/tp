@@ -4,13 +4,13 @@ package seedu.crypto1010.exceptions;
  * Custom exception type used throughout the Crypto1010 application.
  * Allows user-friendly and personality-filled error messages.
  */
-public class Exceptions extends Exception {
+public class Crypto1010Exception extends Exception {
     /**
-     * Creates a new {@code Exceptions} with the given message.
+     * Creates a new {@code Crypto1010Exception} with the given message.
      *
      * @param message detail message describing the error
      */
-    public Exceptions(String message) {
+    public Crypto1010Exception(String message) {
         super(message);
     }
 

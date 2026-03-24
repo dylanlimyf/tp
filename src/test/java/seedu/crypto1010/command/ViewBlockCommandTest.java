@@ -3,7 +3,7 @@ package seedu.crypto1010.command;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import seedu.crypto1010.exceptions.Exceptions;
+import seedu.crypto1010.exceptions.Crypto1010Exception;
 import seedu.crypto1010.model.Blockchain;
 
 import java.io.ByteArrayOutputStream;
@@ -35,7 +35,7 @@ class ViewBlockCommandTest {
         Blockchain blockchain = Blockchain.createDefault();
         ViewBlockCommand command = new ViewBlockCommand("-1");
 
-        Exceptions exception = assertThrows(Exceptions.class, () -> command.execute(blockchain));
+        Crypto1010Exception exception = assertThrows(Crypto1010Exception.class, () -> command.execute(blockchain));
         assertEquals("Error: INDEX must be a non-negative integer. Use: viewblock INDEX", exception.getMessage());
     }
 
@@ -44,7 +44,7 @@ class ViewBlockCommandTest {
         Blockchain blockchain = Blockchain.createDefault();
         ViewBlockCommand command = new ViewBlockCommand("abc");
 
-        Exceptions exception = assertThrows(Exceptions.class, () -> command.execute(blockchain));
+        Crypto1010Exception exception = assertThrows(Crypto1010Exception.class, () -> command.execute(blockchain));
         assertEquals("Error: INDEX must be a non-negative integer. Use: viewblock INDEX", exception.getMessage());
     }
 
@@ -53,7 +53,7 @@ class ViewBlockCommandTest {
         Blockchain blockchain = Blockchain.createDefault();
         ViewBlockCommand command = new ViewBlockCommand("5");
 
-        Exceptions exception = assertThrows(Exceptions.class, () -> command.execute(blockchain));
+        Crypto1010Exception exception = assertThrows(Crypto1010Exception.class, () -> command.execute(blockchain));
         assertEquals("Error: Block index out of range.", exception.getMessage());
     }
 
@@ -63,7 +63,7 @@ class ViewBlockCommandTest {
         System.setOut(new PrintStream(outputStream));
         try {
             command.execute(blockchain);
-        } catch (Exceptions e) {
+        } catch (Crypto1010Exception e) {
             throw new RuntimeException(e);
         } finally {
             System.setOut(originalOut);

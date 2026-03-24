@@ -1,6 +1,6 @@
 package seedu.crypto1010.command;
 
-import seedu.crypto1010.exceptions.Exceptions;
+import seedu.crypto1010.exceptions.Crypto1010Exception;
 import seedu.crypto1010.model.Blockchain;
 
 public abstract class Command {
@@ -10,9 +10,9 @@ public abstract class Command {
         this.helpDescription = helpDescription;
     }
 
-    public abstract void execute(String description, Blockchain blockchain) throws Exceptions;
+    public abstract void execute(String description, Blockchain blockchain) throws Crypto1010Exception;
 
-    public void execute(Blockchain blockchain) throws Exceptions {
+    public void execute(Blockchain blockchain) throws Crypto1010Exception {
         execute("", blockchain);
     }
 

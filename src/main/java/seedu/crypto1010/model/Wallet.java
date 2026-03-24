@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import seedu.crypto1010.exceptions.Exceptions;
+import seedu.crypto1010.exceptions.Crypto1010Exception;
 
 public class Wallet {
     private static final String NO_ADDRESS_ERROR = "Generate keys first";
@@ -26,9 +26,9 @@ public class Wallet {
         return name;
     }
 
-    public String getAddress() throws Exceptions {
+    public String getAddress() throws Crypto1010Exception {
         if (address == null) {
-            throw new Exceptions(NO_ADDRESS_ERROR);
+            throw new Crypto1010Exception(NO_ADDRESS_ERROR);
         }
         return address;
     }
@@ -45,17 +45,5 @@ public class Wallet {
         this.publicKey = keys[0];
         this.privateKey = keys[1];
         address = publicKey.getWalletAddress();
-    }
-
-    private String bytesToHex(byte[] hashBytes) {
-        StringBuilder hex = new StringBuilder();
-        for (byte hashByte : hashBytes) {
-            String value = Integer.toHexString(0xff & hashByte);
-            if (value.length() == 1) {
-                hex.append('0');
-            }
-            hex.append(value);
-        }
-        return hex.toString();
     }
 }

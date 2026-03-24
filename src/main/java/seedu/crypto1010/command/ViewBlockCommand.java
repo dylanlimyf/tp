@@ -1,6 +1,6 @@
 package seedu.crypto1010.command;
 
-import seedu.crypto1010.exceptions.Exceptions;
+import seedu.crypto1010.exceptions.Crypto1010Exception;
 import seedu.crypto1010.model.Block;
 import seedu.crypto1010.model.Blockchain;
 
@@ -26,13 +26,13 @@ public class ViewBlockCommand extends Command {
     }
 
     @Override
-    public void execute(String description, Blockchain blockchain) throws Exceptions {
+    public void execute(String description, Blockchain blockchain) throws Crypto1010Exception {
         Integer index = parseIndex(indexText);
         if (index == null) {
-            throw new Exceptions(INDEX_PARSE_ERROR);
+            throw new Crypto1010Exception(INDEX_PARSE_ERROR);
         }
         if (index >= blockchain.size()) {
-            throw new Exceptions(INDEX_RANGE_ERROR);
+            throw new Crypto1010Exception(INDEX_RANGE_ERROR);
         }
 
         Block block = blockchain.getBlock(index);

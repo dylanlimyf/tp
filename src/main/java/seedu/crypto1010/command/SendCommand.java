@@ -1,6 +1,6 @@
 package seedu.crypto1010.command;
 
-import seedu.crypto1010.exceptions.Exceptions;
+import seedu.crypto1010.exceptions.Crypto1010Exception;
 import seedu.crypto1010.model.Blockchain;
 import seedu.crypto1010.model.Wallet;
 import seedu.crypto1010.model.WalletManager;
@@ -57,38 +57,38 @@ public class SendCommand extends Command {
     }
 
     @Override
-    public void execute(String description, Blockchain blockchain) throws Exceptions {
+    public void execute(String description, Blockchain blockchain) throws Crypto1010Exception {
         ParsedArgs parsed = parseArguments(arguments);
         if (parsed == null) {
-            throw new Exceptions(INVALID_FORMAT_ERROR);
+            throw new Crypto1010Exception(INVALID_FORMAT_ERROR);
         }
 
         Wallet wallet = walletManager.findWallet(parsed.walletName)
-                .orElseThrow(() -> new Exceptions(WALLET_NOT_FOUND_ERROR));
+                .orElseThrow(() -> new Crypto1010Exception(WALLET_NOT_FOUND_ERROR));
 
         BigDecimal amount = parseDecimal(parsed.amount);
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new Exceptions(AMOUNT_INVALID_ERROR + " " + SEND_FORMAT);
+            throw new Crypto1010Exception(AMOUNT_INVALID_ERROR + " " + SEND_FORMAT);
         }
 
         if (!isValidAddress(parsed.recipientAddress)) {
-            throw new Exceptions(INVALID_ADDRESS_ERROR + " " + SEND_FORMAT);
+            throw new Crypto1010Exception(INVALID_ADDRESS_ERROR + " " + SEND_FORMAT);
         }
 
         String speed = parsed.speed == null ? DEFAULT_SPEED : parsed.speed.toLowerCase();
         if (!isSupportedSpeed(speed)) {
-            throw new Exceptions(SPEED_INVALID_ERROR + " " + SEND_FORMAT);
+            throw new Crypto1010Exception(SPEED_INVALID_ERROR + " " + SEND_FORMAT);
         }
 
         BigDecimal fee = resolveFee(parsed.fee, speed);
         if (fee == null) {
-            throw new Exceptions(FEE_INVALID_ERROR + " " + SEND_FORMAT);
+            throw new Crypto1010Exception(FEE_INVALID_ERROR + " " + SEND_FORMAT);
         }
 
         BigDecimal balance = blockchain.getPreciseBalance(parsed.walletName);
         BigDecimal totalCost = amount.add(fee);
         if (balance.compareTo(totalCost) < 0) {
-            throw new Exceptions(INSUFFICIENT_BALANCE_ERROR);
+            throw new Crypto1010Exception(INSUFFICIENT_BALANCE_ERROR);
         }
 
         String receiverAccount = walletManager.findWalletByAddress(parsed.recipientAddress)

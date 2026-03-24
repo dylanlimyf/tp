@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import seedu.crypto1010.exceptions.Exceptions;
+import seedu.crypto1010.exceptions.Crypto1010Exception;
 
 public class WalletManager {
     private final List<Wallet> wallets;
@@ -39,7 +39,7 @@ public class WalletManager {
                 .filter(wallet -> {
                     try {
                         return wallet.getAddress().equalsIgnoreCase(normalizedAddress);
-                    } catch (Exceptions e) {
+                    } catch (Crypto1010Exception e) {
                         return false;
                     }
                 })

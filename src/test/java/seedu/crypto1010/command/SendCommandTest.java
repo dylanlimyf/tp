@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import seedu.crypto1010.exceptions.Exceptions;
+import seedu.crypto1010.exceptions.Crypto1010Exception;
 import seedu.crypto1010.model.Blockchain;
 import seedu.crypto1010.model.Key;
 import seedu.crypto1010.model.Wallet;
@@ -52,7 +52,7 @@ class SendCommandTest {
         walletManager.createWallet("alice"); // alice has balance -10
         SendCommand command = new SendCommand("w/alice to/" + ETH_ADDRESS + " amt/1", walletManager);
 
-        Exceptions exception = assertThrows(Exceptions.class, () -> command.execute(blockchain));
+        Crypto1010Exception exception = assertThrows(Crypto1010Exception.class, () -> command.execute(blockchain));
         assertEquals("Error: Insufficient balance.", exception.getMessage());
     }
 
@@ -62,7 +62,7 @@ class SendCommandTest {
         WalletManager walletManager = new WalletManager();
         SendCommand command = new SendCommand("w/nonexistent to/" + ETH_ADDRESS + " amt/1", walletManager);
 
-        Exceptions exception = assertThrows(Exceptions.class, () -> command.execute(blockchain));
+        Crypto1010Exception exception = assertThrows(Crypto1010Exception.class, () -> command.execute(blockchain));
         assertEquals("Error: Wallet not found.", exception.getMessage());
     }
 
@@ -73,7 +73,7 @@ class SendCommandTest {
         walletManager.createWallet("bob");
         SendCommand command = new SendCommand("w/bob to/" + ETH_ADDRESS + " amt/-5", walletManager);
 
-        Exceptions exception = assertThrows(Exceptions.class, () -> command.execute(blockchain));
+        Crypto1010Exception exception = assertThrows(Crypto1010Exception.class, () -> command.execute(blockchain));
         assertEquals("Error: Amount must be a positive number. Use: send w/WALLET_NAME"
             + " to/RECIPIENT_ADDRESS amt/AMOUNT [speed/SPEED] [fee/FEE] [note/MEMO]",
             exception.getMessage());
@@ -85,7 +85,7 @@ class SendCommandTest {
         WalletManager walletManager = new WalletManager();
         SendCommand command = new SendCommand("invalid", walletManager);
 
-        Exceptions exception = assertThrows(Exceptions.class, () -> command.execute(blockchain));
+        Crypto1010Exception exception = assertThrows(Crypto1010Exception.class, () -> command.execute(blockchain));
         assertTrue(exception.getMessage().startsWith("Error: Invalid send format."));
     }
 
@@ -115,7 +115,7 @@ class SendCommandTest {
         walletManager.createWallet("bob");
         SendCommand command = new SendCommand("w/bob to/not-an-address amt/1", walletManager);
 
-        Exceptions exception = assertThrows(Exceptions.class, () -> command.execute(blockchain));
+        Crypto1010Exception exception = assertThrows(Crypto1010Exception.class, () -> command.execute(blockchain));
         assertEquals("Error: Invalid recipient address. Use: send w/WALLET_NAME"
             + " to/RECIPIENT_ADDRESS amt/AMOUNT [speed/SPEED] [fee/FEE] [note/MEMO]",
             exception.getMessage());
@@ -128,7 +128,7 @@ class SendCommandTest {
         walletManager.createWallet("bob");
         SendCommand command = new SendCommand("w/bob to/" + ETH_ADDRESS + " amt/1 speed/urgent", walletManager);
 
-        Exceptions exception = assertThrows(Exceptions.class, () -> command.execute(blockchain));
+        Crypto1010Exception exception = assertThrows(Crypto1010Exception.class, () -> command.execute(blockchain));
         assertEquals("Error: Unsupported speed. Use speed/slow, speed/standard, or speed/fast."
             + " Use: send w/WALLET_NAME to/RECIPIENT_ADDRESS amt/AMOUNT [speed/SPEED]"
             + " [fee/FEE] [note/MEMO]", exception.getMessage());
@@ -141,14 +141,14 @@ class SendCommandTest {
         walletManager.createWallet("bob");
         SendCommand command = new SendCommand("w/bob to/" + ETH_ADDRESS + " amt/1 fee/-0.1", walletManager);
 
-        Exceptions exception = assertThrows(Exceptions.class, () -> command.execute(blockchain));
+        Crypto1010Exception exception = assertThrows(Crypto1010Exception.class, () -> command.execute(blockchain));
         assertEquals("Error: Fee must be a non-negative number. Use: send w/WALLET_NAME"
             + " to/RECIPIENT_ADDRESS amt/AMOUNT [speed/SPEED] [fee/FEE] [note/MEMO]",
             exception.getMessage());
     }
 
     @Test
-    void execute_sendToLocalWalletAddress_creditsReceiverBalance() throws Exceptions {
+    void execute_sendToLocalWalletAddress_creditsReceiverBalance() throws Crypto1010Exception {
         Blockchain blockchain = Blockchain.createDefault();
         WalletManager walletManager = new WalletManager();
         Wallet sender = walletManager.createWallet("bob");
@@ -174,7 +174,7 @@ class SendCommandTest {
         System.setOut(new PrintStream(outputStream));
         try {
             command.execute(blockchain);
-        } catch (Exceptions e) {
+        } catch (Crypto1010Exception e) {
             throw new RuntimeException(e);
         } finally {
             System.setOut(originalOut);

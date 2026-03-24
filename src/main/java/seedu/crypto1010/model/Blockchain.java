@@ -13,6 +13,7 @@ public class Blockchain {
     private static final String GENESIS_PREVIOUS_HASH = "0000000000000000";
     private static final Pattern TRANSACTION_PATTERN =
             Pattern.compile("^(.+?)\\s*->\\s*(.+?)\\s*:\\s*([+-]?\\d+(?:\\.\\d+)?)$");
+    private static final String GENESIS_TRANSACTION = "Genesis Block";
 
     private final List<Block> blocks;
 
@@ -49,8 +50,15 @@ public class Blockchain {
     }
 
     public ValidationResult validate() {
+        if (blocks.isEmpty()) {
+            return ValidationResult.invalid("Blockchain must contain at least one block.");
+        }
+
         for (int i = 0; i < blocks.size(); i++) {
             Block block = blocks.get(i);
+            if (block.getIndex() != i) {
+                return ValidationResult.invalid("Invalid block index at Block " + i + ".");
+            }
 
             String computedHash = block.computeCurrentHash();
             if (!computedHash.equals(block.getCurrentHash())) {
@@ -65,7 +73,14 @@ public class Blockchain {
                 if (!GENESIS_PREVIOUS_HASH.equals(block.getPreviousHash())) {
                     return ValidationResult.invalid("Invalid previous hash linkage at Block " + i + ".");
                 }
+                if (!isValidGenesisBlock(block)) {
+                    return ValidationResult.invalid("Invalid genesis block transaction data.");
+                }
                 continue;
+            }
+
+            if (!hasValidTransferTransactions(block)) {
+                return ValidationResult.invalid("Invalid transaction data at Block " + i + ".");
             }
 
             Block previousBlock = blocks.get(i - 1);
@@ -124,5 +139,24 @@ public class Blockchain {
             delta = delta.add(amount);
         }
         return delta;
+    }
+
+    private boolean isValidGenesisBlock(Block block) {
+        List<String> transactions = block.getTransactions();
+        return transactions.size() == 1 && GENESIS_TRANSACTION.equals(transactions.get(0).trim());
+    }
+
+    private boolean hasValidTransferTransactions(Block block) {
+        for (String transaction : block.getTransactions()) {
+            Matcher matcher = TRANSACTION_PATTERN.matcher(transaction);
+            if (!matcher.matches()) {
+                return false;
+            }
+            BigDecimal amount = new BigDecimal(matcher.group(3));
+            if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+                return false;
+            }
+        }
+        return true;
     }
 }

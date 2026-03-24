@@ -3,7 +3,7 @@ package seedu.crypto1010.command;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import seedu.crypto1010.exceptions.Exceptions;
+import seedu.crypto1010.exceptions.Crypto1010Exception;
 import seedu.crypto1010.model.Block;
 import seedu.crypto1010.model.Blockchain;
 
@@ -95,11 +95,58 @@ class ValidateCommandTest {
     }
 
     @Test
+    void execute_negativeAmountTransaction_printsTransactionReason() {
+        Block genesis = new Block(
+                0,
+                LocalDateTime.of(2026, 2, 12, 14, 30, 21),
+                "0000000000000000",
+                List.of("Genesis Block"));
+        Block secondBlock = new Block(
+                1,
+                LocalDateTime.of(2026, 2, 12, 14, 35, 2),
+                genesis.getCurrentHash(),
+                List.of("alice -> bob : -10"));
+        Blockchain blockchain = new Blockchain(List.of(genesis, secondBlock));
+        ValidateCommand command = new ValidateCommand();
+
+        String output = runCommand(command, blockchain);
+
+        assertEquals(
+                "Blockchain is invalid. Reason: Invalid transaction data at Block 1."
+                        + System.lineSeparator(),
+                output);
+    }
+
+    @Test
+    void execute_nonSequentialBlockIndex_printsIndexReason() {
+        Block genesis = new Block(
+                0,
+                LocalDateTime.of(2026, 2, 12, 14, 30, 21),
+                "0000000000000000",
+                List.of("Genesis Block"));
+        Block secondBlock = new Block(
+                2,
+                LocalDateTime.of(2026, 2, 12, 14, 35, 2),
+                genesis.getCurrentHash(),
+                List.of("alice -> bob : 10"));
+        Blockchain blockchain = new Blockchain(List.of(genesis, secondBlock));
+        ValidateCommand command = new ValidateCommand();
+
+        String output = runCommand(command, blockchain);
+
+        assertEquals(
+                "Blockchain is invalid. Reason: Invalid block index at Block 1."
+                        + System.lineSeparator(),
+                output);
+    }
+
+    @Test
     void execute_withUnexpectedArguments_throwsFormatError() {
         Blockchain blockchain = Blockchain.createDefault();
         ValidateCommand command = new ValidateCommand();
 
-        Exceptions exception = assertThrows(Exceptions.class, () -> command.execute("extra", blockchain));
+        Crypto1010Exception exception = assertThrows(Crypto1010Exception.class,
+                () -> command.execute("extra", blockchain));
         assertEquals("Error: Invalid validate format. Use: validate", exception.getMessage());
     }
 
@@ -109,7 +156,7 @@ class ValidateCommandTest {
         System.setOut(new PrintStream(outputStream));
         try {
             command.execute(blockchain);
-        } catch (Exceptions e) {
+        } catch (Crypto1010Exception e) {
             throw new RuntimeException(e);
         } finally {
             System.setOut(originalOut);

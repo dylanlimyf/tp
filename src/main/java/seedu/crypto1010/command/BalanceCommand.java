@@ -1,7 +1,8 @@
 package seedu.crypto1010.command;
 
-import seedu.crypto1010.exceptions.Exceptions;
+import seedu.crypto1010.exceptions.Crypto1010Exception;
 import seedu.crypto1010.model.Blockchain;
+import seedu.crypto1010.model.WalletManager;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -16,40 +17,46 @@ public class BalanceCommand extends Command {
     private static final String NAME_ERROR = "Error: wallet name cannot be empty.";
     private static final String NAME_WHITESPACE_ERROR = "Error: wallet name must be one word without spaces.";
     private static final String INVALID_FORMAT_ERROR = "Error: Invalid balance format. Use: balance w/WALLET_NAME";
+    private static final String WALLET_NOT_FOUND_ERROR = "Error: Wallet not found.";
     private static final String BALANCE_FORMAT = "Use: balance w/WALLET_NAME";
 
     private final String arguments;
+    private final WalletManager walletManager;
 
-    public BalanceCommand(String arguments) {
+    public BalanceCommand(String arguments, WalletManager walletManager) {
         super(HELP_DESCRIPTION);
         this.arguments = arguments;
+        this.walletManager = walletManager;
     }
 
     @Override
-    public void execute(String description, Blockchain blockchain) throws Exceptions {
+    public void execute(String description, Blockchain blockchain) throws Crypto1010Exception {
         String walletName = parseArguments(arguments);
         String trimmedWalletName = walletName.trim();
+        if (!walletManager.hasWallet(trimmedWalletName)) {
+            throw new Crypto1010Exception(WALLET_NOT_FOUND_ERROR);
+        }
         BigDecimal balance = blockchain.getPreciseBalance(trimmedWalletName);
 
         System.out.println("Balance of " + trimmedWalletName + ": " + formatBalance(balance));
     }
 
-    private String parseArguments(String args) throws Exceptions {
+    private String parseArguments(String args) throws Crypto1010Exception {
         if (args == null || args.isBlank()) {
-            throw new Exceptions(NAME_ERROR + " " + BALANCE_FORMAT);
+            throw new Crypto1010Exception(NAME_ERROR + " " + BALANCE_FORMAT);
         }
 
         String trimmedArgs = args.trim();
         if (!trimmedArgs.startsWith("w/")) {
-            throw new Exceptions(INVALID_FORMAT_ERROR);
+            throw new Crypto1010Exception(INVALID_FORMAT_ERROR);
         }
 
         String walletName = trimmedArgs.substring(2).trim();
         if (walletName.isEmpty()) {
-            throw new Exceptions(NAME_ERROR + " " + BALANCE_FORMAT);
+            throw new Crypto1010Exception(NAME_ERROR + " " + BALANCE_FORMAT);
         }
         if (walletName.chars().anyMatch(Character::isWhitespace)) {
-            throw new Exceptions(NAME_WHITESPACE_ERROR + " " + BALANCE_FORMAT);
+            throw new Crypto1010Exception(NAME_WHITESPACE_ERROR + " " + BALANCE_FORMAT);
         }
 
         return walletName;

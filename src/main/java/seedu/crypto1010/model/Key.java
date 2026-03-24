@@ -2,7 +2,7 @@ package seedu.crypto1010.model;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import seedu.crypto1010.exceptions.Exceptions;
+import seedu.crypto1010.exceptions.Crypto1010Exception;
 
 public class Key {
     private static final String GENERATE_START = "Starting key generation...";
@@ -22,7 +22,7 @@ public class Key {
     private final boolean isPublic;
     private final String walletAddress;
 
-    public Key(BigInteger modulus, BigInteger exponent, boolean isPublic) throws Exceptions {
+    public Key(BigInteger modulus, BigInteger exponent, boolean isPublic) throws Crypto1010Exception {
         this.modulus = modulus;
         this.exponent = exponent;
         this.isPublic = isPublic;
@@ -37,7 +37,7 @@ public class Key {
         return walletAddress;
     }
 
-    public static Key[] generateKeyPair() throws Exceptions {
+    public static Key[] generateKeyPair() throws Crypto1010Exception {
         System.out.println(GENERATE_START);
 
         // Creates primeP
@@ -65,7 +65,7 @@ public class Key {
         // Ensures math checks out
         BigInteger check = PUBLIC_EXPONENT.multiply(privateExponent).mod(totient);
         if (!check.equals(BigInteger.ONE)) {
-            throw new Exceptions(KEY_GENERATION_FAIL_ERROR);
+            throw new Crypto1010Exception(KEY_GENERATION_FAIL_ERROR);
         }
 
         // Creates Keys for key pair
