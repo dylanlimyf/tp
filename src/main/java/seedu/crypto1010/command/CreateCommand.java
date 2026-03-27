@@ -5,6 +5,8 @@ import seedu.crypto1010.model.Blockchain;
 import seedu.crypto1010.model.Wallet;
 import seedu.crypto1010.model.WalletManager;
 
+import java.util.Objects;
+
 public class CreateCommand extends Command {
     private static final String HELP_DESCRIPTION = """
             Format: create w/WALLET_NAME
@@ -26,23 +28,26 @@ public class CreateCommand extends Command {
     public CreateCommand(String arguments, WalletManager walletManager) {
         super(HELP_DESCRIPTION);
         this.arguments = arguments;
-        this.walletManager = walletManager;
+        this.walletManager = Objects.requireNonNull(walletManager);
     }
 
     @Override
     public void execute(String description, Blockchain blockchain) throws Crypto1010Exception {
-        String walletName = parseArguments(arguments);
-        if (walletName == null || walletName.isBlank()) {
-            throw new Crypto1010Exception(NAME_ERROR + " " + CREATE_FORMAT);
-        }
+        String walletName = parseArguments(resolveArguments(description));
 
-        String trimmedWalletName = walletName.trim();
-        if (walletManager.hasWallet(trimmedWalletName)) {
+        if (walletManager.hasWallet(walletName)) {
             throw new Crypto1010Exception(DUPLICATE_ERROR);
         }
 
-        Wallet wallet = walletManager.createWallet(trimmedWalletName);
+        Wallet wallet = walletManager.createWallet(walletName);
         System.out.println("Wallet created: " + wallet.getName());
+    }
+
+    private String resolveArguments(String description) {
+        if (arguments == null || arguments.isBlank()) {
+            return description;
+        }
+        return arguments;
     }
 
     private String parseArguments(String args) throws Crypto1010Exception {

@@ -17,7 +17,7 @@ public class ListCommand extends Command {
   
     private static final String NO_WALLETS_MESSAGE = "No wallets found.";
     private static final String INVALID_FORMAT_ERROR = "Error: Invalid list format. Use: list";
-    private static final String GENERATE_KEYS_FIRST = "Generate keys first";
+    private static final String INVALID_WALLET_DATA_ERROR = "Error: Wallet data is corrupted.";
 
     private final WalletManager walletManager;
   
@@ -41,12 +41,20 @@ public class ListCommand extends Command {
         System.out.println("Wallets:");
         for (int i = 0; i < wallets.size(); i++) {
             Wallet wallet = wallets.get(i);
-            System.out.print((i + 1) + ". " + wallet.getName() + " | Address: ");
+            String walletName = validateWalletName(wallet);
+            System.out.print((i + 1) + ". " + walletName + " | Address: ");
             try {
                 System.out.println(wallet.getAddress());
             } catch (Crypto1010Exception e) {
                 System.out.println(e.getMessage());
             }
         }
+    }
+
+    private String validateWalletName(Wallet wallet) throws Crypto1010Exception {
+        if (wallet == null || wallet.getName() == null || wallet.getName().isBlank()) {
+            throw new Crypto1010Exception(INVALID_WALLET_DATA_ERROR);
+        }
+        return wallet.getName();
     }
 }

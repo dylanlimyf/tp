@@ -73,6 +73,23 @@ class ListCommandTest {
         assertEquals("Error: Invalid list format. Use: list", exception.getMessage());
     }
 
+    @Test
+    void execute_corruptWalletData_throwsException() {
+        Blockchain blockchain = Blockchain.createDefault();
+        WalletManager walletManager = new WalletManager();
+        walletManager.createWallet("   ");
+        ListCommand command = new ListCommand(walletManager);
+
+        Crypto1010Exception exception = assertThrows(Crypto1010Exception.class, () -> command.execute(blockchain));
+
+        assertEquals("Error: Wallet data is corrupted.", exception.getMessage());
+    }
+
+    @Test
+    void constructor_nullWalletManager_throwsException() {
+        assertThrows(NullPointerException.class, () -> new ListCommand(null));
+    }
+
     private String runCommand(Command command, Blockchain blockchain) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream originalOut = System.out;
