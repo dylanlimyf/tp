@@ -1,0 +1,106 @@
+package seedu.crypto1010.command;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import seedu.crypto1010.exceptions.Crypto1010Exception;
+import seedu.crypto1010.model.Blockchain;
+import seedu.crypto1010.model.Key;
+import seedu.crypto1010.model.Wallet;
+import seedu.crypto1010.model.WalletManager;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.math.BigInteger;
+
+import org.junit.jupiter.api.Test;
+
+class ListCommandTest {
+    @Test
+    void execute_noWallets_printsEmptyMessage() {
+        Blockchain blockchain = Blockchain.createDefault();
+        WalletManager walletManager = new WalletManager();
+        ListCommand command = new ListCommand(walletManager);
+
+        String output = runCommand(command, blockchain);
+
+        assertEquals("No wallets found." + System.lineSeparator(), output);
+    }
+
+    @Test
+    void execute_existingWallets_printsWalletNames() throws Crypto1010Exception {
+        Blockchain blockchain = Blockchain.createDefault();
+        WalletManager walletManager = new WalletManager();
+        walletManager.createWallet("alice");
+        walletManager.createWallet("bob");
+        ListCommand command = new ListCommand(walletManager);
+
+        String output = runCommand(command, blockchain);
+
+        String expected = String.join(System.lineSeparator(),
+                "Wallets:",
+                "1. alice | Address: Generate keys first",
+                "2. bob | Address: Generate keys first") + System.lineSeparator();
+        assertEquals(expected, output);
+    }
+
+    @Test
+    void execute_walletWithGeneratedKeys_printsAddress() throws Crypto1010Exception {
+        Blockchain blockchain = Blockchain.createDefault();
+        WalletManager walletManager = new WalletManager();
+        Wallet alice = walletManager.createWallet("alice");
+        alice.setKeys(new Key[]{
+            new Key(BigInteger.valueOf(3), BigInteger.valueOf(7), true),
+            new Key(BigInteger.valueOf(3), BigInteger.valueOf(11), false)});
+        ListCommand command = new ListCommand(walletManager);
+
+        String output = runCommand(command, blockchain);
+
+        String expected = String.join(System.lineSeparator(),
+                "Wallets:",
+                "1. alice | Address: " + alice.getAddress()) + System.lineSeparator();
+        assertEquals(expected, output);
+    }
+
+    @Test
+    void execute_withUnexpectedArguments_throwsFormatError() {
+        Blockchain blockchain = Blockchain.createDefault();
+        WalletManager walletManager = new WalletManager();
+        ListCommand command = new ListCommand(walletManager);
+
+        Crypto1010Exception exception = assertThrows(Crypto1010Exception.class,
+                () -> command.execute("extra", blockchain));
+        assertEquals("Error: Invalid list format. Use: list", exception.getMessage());
+    }
+
+    @Test
+    void execute_corruptWalletData_throwsException() {
+        Blockchain blockchain = Blockchain.createDefault();
+        WalletManager walletManager = new WalletManager();
+        walletManager.createWallet("   ");
+        ListCommand command = new ListCommand(walletManager);
+
+        Crypto1010Exception exception = assertThrows(Crypto1010Exception.class, () -> command.execute(blockchain));
+
+        assertEquals("Error: Wallet data is corrupted.", exception.getMessage());
+    }
+
+    @Test
+    void constructor_nullWalletManager_throwsException() {
+        assertThrows(NullPointerException.class, () -> new ListCommand(null));
+    }
+
+    private String runCommand(Command command, Blockchain blockchain) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outputStream));
+        try {
+            command.execute(blockchain);
+        } catch (Crypto1010Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            System.setOut(originalOut);
+        }
+        return outputStream.toString();
+    }
+}
