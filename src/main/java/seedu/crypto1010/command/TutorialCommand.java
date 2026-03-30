@@ -1,22 +1,18 @@
 package seedu.crypto1010.command;
 
-import seedu.crypto1010.Crypto1010;
 import seedu.crypto1010.Parser;
 import seedu.crypto1010.exceptions.Crypto1010Exception;
 import seedu.crypto1010.model.Blockchain;
 import seedu.crypto1010.model.WalletManager;
-import seedu.crypto1010.storage.WalletStorage;
 
 import java.util.Scanner;
 
 public class TutorialCommand extends Command {
     private static final String HELP_DESCRIPTION = """
-            Format: help [c/COMMAND]
-            Example: help c/list
+            Format: tutorial start
+            Example: tutorial start
             
-            COMMAND is optional
-            If no valid COMMAND is given: lists all the available commands
-            If a valid COMMAND is given: displays details regarding that command
+            Starts the tutorial which guides the user through using the simple commands
             """;
 
     String[] instructions = {
@@ -29,9 +25,11 @@ public class TutorialCommand extends Command {
             "balance w/alice",
             "balance w/bob",
             "help c/send",
-            "send w/bob amt/3 to/",
+            "send w/bob amt/3 to/{alice's wallet address}",
             "balance w/alice",
             "balance w/bob",
+            "validate",
+            "viewblock 2",
             "tutorial exit"
     };
 
@@ -54,7 +52,8 @@ public class TutorialCommand extends Command {
             "Now that the transaction is successful, let's check the balance of the wallets again starting with alice",
             "And now bob",
             "Notice how there was a fee deducted from bob's wallet in addition to the amount that he sent to alice\n" +
-                    "We can also view the transaction that was just made",
+                    "Now we validate the blockchain to make sure that it is not tampered with",
+            "We can also view the transaction that we made",
             "Congrats! You made it to the end of the tutorial!\n" +
                     "You are now ready to start your own simulated crypto blockchain!"
     };
@@ -62,25 +61,30 @@ public class TutorialCommand extends Command {
 
     private static final String ERROR_MESSAGE = "Please input the given command to continue\n" +
             "If you want to exit tutorial mode, type: tutorial exit";
+    private static final String EXIT_MESSAGE = "Exiting tutorial...";
+    private static final String WELCOME_MESSAGE = "Welcome to the tutorial!";
+
     public TutorialCommand() {
         super(HELP_DESCRIPTION);
     }
 
     public void execute(String description, Blockchain blockchain) {
         Scanner in = new Scanner(System.in);
-        WalletStorage walletStorage = new WalletStorage(Crypto1010.class);
         WalletManager walletManager = new WalletManager();
         Parser parser = new Parser(walletManager);
 
         int index = 0;
 
+        System.out.println(WELCOME_MESSAGE);
         while (true) {
+            System.out.println(tutorialMessages[index]);
             System.out.println("Enter the following command:");
             System.out.println(instructions[index]);
             String input = in.nextLine().strip();
-            if (input.equals("tutorial exit")) {
+            if (input.equals("tutorial exit") || input.equals("exit")) {
+                System.out.println(EXIT_MESSAGE);
                 return;
-            } else if (input.equals(instructions[index])) {
+            } else if (input.equals(instructions[index]) || (input.startsWith(instructions[index].substring(0,19)) && index == 9)) {
                 Command c = parser.parse(input);
                 String[] components = input.split("\\s+", 2);
                 String descriptions = components.length > 1 ? components[1] : "";
@@ -90,11 +94,8 @@ public class TutorialCommand extends Command {
                 } catch (Crypto1010Exception e) {
                     System.out.println(ERROR_MESSAGE);
                 }
-            } else if (input.equals("exit")) {
-                return;
             } else {
-                System.out.println("That was not the given instruction");
-                System.out.println("If you wish to exit type: exit()");
+                System.out.println(ERROR_MESSAGE);
             }
         }
     }
