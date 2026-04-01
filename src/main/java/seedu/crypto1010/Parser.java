@@ -42,7 +42,7 @@ public class Parser {
         String arguments = components.length > 1 ? components[1].trim() : "";
         return switch (commandWord) {
         case LIST -> new ListCommand(walletManager);
-        case HELP -> new HelpCommand();
+        case HELP -> new HelpCommand(arguments);
         case CREATE -> new CreateCommand(arguments, walletManager);
         case BALANCE -> new BalanceCommand(arguments, walletManager);
         case VALIDATE -> new ValidateCommand();

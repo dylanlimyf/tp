@@ -63,12 +63,16 @@ public class TutorialCommand extends Command {
             "If you want to exit tutorial mode, type: tutorial exit";
     private static final String EXIT_MESSAGE = "Exiting tutorial...";
     private static final String WELCOME_MESSAGE = "Welcome to the tutorial!";
+    private static final String INVALID_FORMAT_ERROR = "Error: Invalid tutorial format. Use tutorial start";
 
     public TutorialCommand() {
         super(HELP_DESCRIPTION);
     }
 
-    public void execute(String description, Blockchain blockchain) {
+    public void execute (String description, Blockchain blockchain) throws Crypto1010Exception {
+        if (!description.equals("start")) {
+            throw new Crypto1010Exception(INVALID_FORMAT_ERROR);
+        }
         Scanner in = new Scanner(System.in);
         WalletManager walletManager = new WalletManager();
         Parser parser = new Parser(walletManager);

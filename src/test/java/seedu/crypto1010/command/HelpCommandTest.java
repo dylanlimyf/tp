@@ -12,7 +12,7 @@ public class HelpCommandTest {
 
     @Test
     public void execute_noCommand_showsGeneralHelpMessage() {
-        HelpCommand helpCommand = new HelpCommand();
+        HelpCommand helpCommand = new HelpCommand("");
         Blockchain blockchain = Blockchain.createDefault();
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -20,7 +20,7 @@ public class HelpCommandTest {
         System.setOut(new PrintStream(outputStream));
 
         try {
-            helpCommand.execute("help", blockchain);
+            helpCommand.execute("", blockchain);
         } finally {
             System.setOut(originalOut);
         }
@@ -33,7 +33,7 @@ public class HelpCommandTest {
 
     @Test
     public void execute_invalidCommand_showsErrorMessage() {
-        HelpCommand helpCommand = new HelpCommand();
+        HelpCommand helpCommand = new HelpCommand("c/invalidCommand");
         Blockchain blockchain = Blockchain.createDefault();
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -41,7 +41,7 @@ public class HelpCommandTest {
         System.setOut(new PrintStream(outputStream));
 
         try {
-            helpCommand.execute("help c/invalidcommand", blockchain);
+            helpCommand.execute("", blockchain);
         } finally {
             System.setOut(originalOut);
         }
@@ -54,7 +54,7 @@ public class HelpCommandTest {
 
     @Test
     public void execute_helpForSpecificCommand_showsCommandFormat() {
-        HelpCommand helpCommand = new HelpCommand();
+        HelpCommand helpCommand = new HelpCommand("c/send");
         Blockchain blockchain = Blockchain.createDefault();
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -62,7 +62,7 @@ public class HelpCommandTest {
         System.setOut(new PrintStream(outputStream));
 
         try {
-            helpCommand.execute("c/send", blockchain);
+            helpCommand.execute("", blockchain);
         } finally {
             System.setOut(originalOut);
         }
