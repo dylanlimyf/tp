@@ -75,7 +75,7 @@ public class HelpCommandTest {
 
     @Test
     public void execute_helpForHistoryCommand_showsCommandFormat() {
-        HelpCommand helpCommand = new HelpCommand("c/history);
+        HelpCommand helpCommand = new HelpCommand("c/history");
         Blockchain blockchain = Blockchain.createDefault();
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
