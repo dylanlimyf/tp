@@ -75,7 +75,7 @@ public class HelpCommandTest {
 
     @Test
     public void execute_helpForHistoryCommand_showsCommandFormat() {
-        HelpCommand helpCommand = new HelpCommand();
+        HelpCommand helpCommand = new HelpCommand("c/history);
         Blockchain blockchain = Blockchain.createDefault();
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -83,7 +83,7 @@ public class HelpCommandTest {
         System.setOut(new PrintStream(outputStream));
 
         try {
-            helpCommand.execute("c/history", blockchain);
+            helpCommand.execute("", blockchain);
         } finally {
             System.setOut(originalOut);
         }
