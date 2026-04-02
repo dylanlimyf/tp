@@ -8,6 +8,7 @@ import seedu.crypto1010.service.TransferRequest;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.Scanner;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
@@ -66,37 +67,50 @@ public class SendCommand extends Command {
     }
 
     @Override
-    public void execute(String description, Blockchain blockchain) throws Crypto1010Exception {
-        ParsedArgs parsed = parseArguments(arguments);
+    public void execute(Blockchain blockchain, Scanner in) throws Crypto1010Exception {
+        ParsedArgs parsed = parseRequiredArguments(arguments);
+        validateSenderWallet(parsed.walletName);
+        validateRecipientAddress(parsed.recipientAddress);
+
+        TransferRequest transferRequest = createTransferRequest(parsed);
+        transactionRecordingService.recordTransfer(transferRequest, blockchain);
+
+        printTransferSummary(transferRequest);
+    }
+
+    private ParsedArgs parseRequiredArguments(String args) throws Crypto1010Exception {
+        ParsedArgs parsed = parseArguments(args);
         if (parsed == null) {
             throw new Crypto1010Exception(INVALID_FORMAT_ERROR);
         }
+        return parsed;
+    }
 
-        BigDecimal amount = parsePositiveAmount(parsed.amount);
-
-        if (!walletManager.hasWallet(parsed.walletName)) {
+    private void validateSenderWallet(String walletName) throws Crypto1010Exception {
+        if (!walletManager.hasWallet(walletName)) {
             throw new Crypto1010Exception(WALLET_NOT_FOUND_ERROR);
         }
+    }
 
-        if (!isValidAddress(parsed.recipientAddress)) {
+    private void validateRecipientAddress(String recipientAddress) throws Crypto1010Exception {
+        if (!isValidAddress(recipientAddress)) {
             throw new Crypto1010Exception(INVALID_ADDRESS_ERROR + " " + SEND_FORMAT);
         }
+    }
 
+    private TransferRequest createTransferRequest(ParsedArgs parsed) throws Crypto1010Exception {
+        BigDecimal amount = parsePositiveAmount(parsed.amount);
         String speed = resolveSpeed(parsed.speed);
-
         BigDecimal fee = resolveValidatedFee(parsed.fee, speed);
-
         String speedLabel = parsed.fee == null ? speed : MANUAL_SPEED_LABEL;
-        TransferRequest transferRequest = new TransferRequest(
+
+        return new TransferRequest(
                 parsed.walletName,
                 parsed.recipientAddress,
                 amount,
                 speedLabel,
                 fee,
                 parsed.note);
-        transactionRecordingService.recordTransfer(transferRequest, blockchain);
-
-        printTransferSummary(transferRequest);
     }
 
     private BigDecimal parsePositiveAmount(String amountArgument) throws Crypto1010Exception {

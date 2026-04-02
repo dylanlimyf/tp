@@ -19,6 +19,7 @@ The application is designed for educational use and records transactions in a si
   + #### [Cross-account transfer: `crossSend`](#crosssend-cross-account-transfer)
   + #### [Show wallet send history: `history`](#history-show-wallet-send-history)
   + #### [Validate blockchain integrity: `validate`](#validate-validate-blockchain-integrity)
+  + #### [View blockchain overview: `viewchain`](#viewchain-view-blockchain-overview)
   + #### [View one block: `viewblock`](#viewblock-view-one-block)
   + #### [Save and terminate: `exit`](#exit-save-and-terminate)
 + #### [Coming Soon](#coming-soon)
@@ -39,6 +40,8 @@ The application is designed for educational use and records transactions in a si
    ```
 1. Enter commands in the terminal.
 1. At startup, choose `login` or `register`, then enter your username and password to access your account-specific wallets and blockchain data.
+<br>
+
 ---
 ## Startup Authentication
 - On launch, Crypto1010 requires an account before loading any wallets or blockchain data.
@@ -97,10 +100,12 @@ The application is designed for educational use and records transactions in a si
     e.g. in `validate`  
     `validate dsja 2190` will be interpreted as `validate`  
     <br/>
+<br>
+
 ### `help`: Display command help
 Format: `help [c/COMMAND]`
 
-- If no command is provided (or an invalid one is provided), all commands are listed.
+- If no command is provided, all commands are listed.
 - If a valid command is provided, detailed help for that command is shown.
 
 Examples:
@@ -200,6 +205,17 @@ Format: `validate`
 - Verifies hashes, previous-hash links, and transaction data quality for all blocks.
 - Reports either success or the first detected failure reason.
 
+### `viewchain`: View blockchain overview
+Format: `viewchain`
+
+- Displays a blockchain summary with:
+  - total number of blocks
+  - total number of transactions across all blocks
+  - compact list of blocks (index, transaction count, timestamp, shortened hash)
+
+Example:
+- `viewchain`
+
 ### `viewblock`: View one block
 Format: `viewblock INDEX`
 
@@ -234,14 +250,19 @@ This feature is not available yet in the current release.
 - `crossSend acc/ACCOUNT_NAME amt/AMOUNT curr/CURRENCY`
 - `history w/WALLET_NAME`
 - `validate`
+- `viewchain`
 - `viewblock INDEX`
 - `exit`
+<br>
+
 ---
 ## Data and Persistence
 - Account credentials are stored in `data/accounts/credentials.txt`.
 - Each account has its own blockchain data at `data/accounts/USERNAME/blockchain.json`.
 - Each account has its own wallet names, wallet currencies, and wallet send history at `data/accounts/USERNAME/wallets.txt`.
 - Generated keys and wallet addresses are not currently persisted; run `keygen` again after restarting if you need an address.
+<br>
+
 ---
 ## FAQ
 **Q**: Do different users share wallets and blockchain data?  

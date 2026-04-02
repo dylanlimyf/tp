@@ -9,6 +9,7 @@ import seedu.crypto1010.exceptions.Crypto1010Exception;
 
 public class Wallet {
     private static final String NO_ADDRESS_ERROR = "Generate keys first";
+    private static final String INVALID_KEYS_ERROR = "keys must contain public and private keys";
 
     private final String name;
     private final String currencyCode;
@@ -26,6 +27,8 @@ public class Wallet {
         this.currencyCode = CurrencyCode.normalizeOrDefault(currencyCode);
         this.address = null; //set after keygen
         this.transactionHistory = new ArrayList<>();
+        assert !this.name.isBlank() : "wallet name must not be blank";
+        assert this.currencyCode != null : "currency code must not be null";
     }
 
     public String getName() {
@@ -45,15 +48,24 @@ public class Wallet {
 
     public void addTransaction(String transactionEntry) {
         transactionHistory.add(Objects.requireNonNull(transactionEntry).trim());
+        assert !transactionHistory.get(transactionHistory.size() - 1).isBlank()
+                : "transaction entry must not be blank";
     }
 
     public List<String> getTransactionHistory() {
+        assert transactionHistory != null : "transaction history must be initialized";
         return Collections.unmodifiableList(transactionHistory);
     }
 
     public void setKeys(Key[] keys) {
+        if (keys == null || keys.length < 2 || keys[0] == null || keys[1] == null) {
+            throw new IllegalArgumentException(INVALID_KEYS_ERROR);
+        }
         this.publicKey = keys[0];
         this.privateKey = keys[1];
         address = publicKey.getWalletAddress();
+        assert publicKey != null : "public key must not be null";
+        assert privateKey != null : "private key must not be null";
+        assert address != null && !address.isBlank() : "wallet address must be initialized";
     }
 }

@@ -7,12 +7,13 @@ import seedu.crypto1010.model.Wallet;
 import seedu.crypto1010.model.WalletManager;
 
 import java.util.Objects;
+import java.util.Scanner;
 
 public class CreateCommand extends Command {
     private static final String HELP_DESCRIPTION = """
             Format: create w/WALLET_NAME [curr/CURRENCY]
             Example: create w/BobWallet curr/btc
-             
+            
             Creates a wallet with the associated NAME
             NAME must be one word without spaces
             CURRENCY is optional and is used by crossSend to identify the wallet for that currency
@@ -42,8 +43,8 @@ public class CreateCommand extends Command {
     }
 
     @Override
-    public void execute(String description, Blockchain blockchain) throws Crypto1010Exception {
-        ParsedCreateArguments parsedArguments = parseArguments(resolveArguments(description));
+    public void execute(Blockchain blockchain, Scanner in) throws Crypto1010Exception {
+        ParsedCreateArguments parsedArguments = parseArguments(resolveArguments(arguments));
         String walletName = parsedArguments.walletName();
         String currencyCode = parsedArguments.currencyCode();
 
@@ -106,12 +107,11 @@ public class CreateCommand extends Command {
         if (walletName == null) {
             throw new Crypto1010Exception(INVALID_FORMAT_ERROR);
         }
-        if (walletName.isEmpty()) {
-            throw new Crypto1010Exception(NAME_ERROR + " " + CREATE_FORMAT);
-        }
-        if (walletName.chars().anyMatch(Character::isWhitespace)) {
-            throw new Crypto1010Exception(NAME_WHITESPACE_ERROR + " " + CREATE_FORMAT);
-        }
+        walletName = CommandParserUtil.validateWalletName(
+                walletName,
+                NAME_ERROR,
+                NAME_WHITESPACE_ERROR,
+                CREATE_FORMAT);
         if (walletName.contains("|")) {
             throw new Crypto1010Exception(NAME_RESERVED_CHARACTER_ERROR + " " + CREATE_FORMAT);
         }
