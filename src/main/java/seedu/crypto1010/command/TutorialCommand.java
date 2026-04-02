@@ -21,9 +21,7 @@ public class TutorialCommand extends Command {
     private static final String WELCOME_MESSAGE = "Welcome to the tutorial!";
     private static final String INVALID_FORMAT_ERROR = "Error: Invalid tutorial format. Use tutorial start";
 
-    private final String arguments;
-
-    String[] instructions = {
+    private static final String[] instructions = {
         "create w/alice",
         "create w/bob",
         "list",
@@ -42,7 +40,7 @@ public class TutorialCommand extends Command {
         "tutorial exit"
     };
 
-    String[] tutorialMessages = {
+    private static final String[] tutorialMessages = {
         "First, let's start by creating a new wallet called \"alice\"",
         "Next, let's create another wallet called \"bob\"",
         "Let's look at the wallets that we have created",
@@ -55,11 +53,9 @@ public class TutorialCommand extends Command {
         "We do the same for bob",
         "Remember the amount of money that each wallet has before the transaction\n" +
                 "Before we send money, let's use the help command to learn how to send money",
-        """
-        Now we are ready to send money!
-        Let's get bob to send 3 dollars to alice
-        For the destination, remember to use the address of alice's wallet we obtained from earlier
-        """,
+        "Now we are ready to send money!\n" +
+            "Let's get bob to send 3 dollars to alice\n" +
+            "For the destination, remember to use the address of alice's wallet we obtained from earlier",
         "Now that the transaction is successful, let's check the balance of the wallets again starting with alice",
         "And now bob",
         "Notice how there was a fee deducted from bob's wallet in addition to the amount that he sent to alice\n" +
@@ -69,6 +65,8 @@ public class TutorialCommand extends Command {
         "Congrats! You made it to the end of the tutorial!\n" +
                 "You are now ready to start your own simulated crypto blockchain!"
     };
+
+    private final String arguments;
 
     public TutorialCommand(String arguments) {
         super(HELP_DESCRIPTION);
