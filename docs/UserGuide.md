@@ -51,52 +51,52 @@ The application is designed for educational use and records transactions in a si
 - Passwords must be at least 6 characters long.
 
 ## Features
-> [!NOTE]
-> ### **Command Formatting:**
-> + First tokens must always be the command word.  
+**NOTE**
+### Command Formatting
++ First tokens must always be the command word.  
     e.g. in `viewblock INDEX`,  
     ✅ `viewblock 2`  
     ❌ `2 viewblock`  
     <br/>
-> + Words in `UPPER_CASE` are the parameters to be supplied by the user.  
++ Words in `UPPER_CASE` are the parameters to be supplied by the user.  
     These parameters **MUST** be filled in.  
     e.g. in `viewblock INDEX`,  
     ✅ `viewblock 2`  
     ❌ `viewblock`  
     <br/>
-> + Parameters in the format `[UPPER_CASE]` are optional.  
++ Parameters in the format `[UPPER_CASE]` are optional.  
     e.g. in `help [c/COMMAND]`  
     ✅ `help`  
     ✅ `help c/create`  
     <br/>
-> + Parameters in the format `/type UPPER_CASE` must include `/type` in the input.   
++ Parameters in the format `/type UPPER_CASE` must include `/type` in the input.   
     e.g. in `create w/WALLET_NAME`  
     ✅ `create w/alice`  
     ❌ `create alice`  
     <br/>
-> + Parameters in the format `/type UPPER_CASE` must include the exact `/type` in the input.   
++ Parameters in the format `/type UPPER_CASE` must include the exact `/type` in the input.   
     e.g. in `create w/WALLET_NAME`  
     ✅ `create w/alice`  
     ❌ `create name/alice`  
     <br/>
-> + Parameters in the format `/type UPPER_CASE` are prefix-based, and spacing support may differ by command parser implementation.  
++ Parameters in the format `/type UPPER_CASE` are prefix-based, and spacing support may differ by command parser implementation.  
     e.g. in `create w/WALLET_NAME`  
     ✅ `create w/alice`  
     ❌ `create alice`  
     <br/>
-> + Parameters must be separated by spaces.   
++ Parameters must be separated by spaces.   
     e.g. in `send w/WALLET_NAME to/RECIPIENT_ADDRESS amt/AMOUNT`  
     ✅ `send w/bob to/0x1111111111111111111111111111111111111111 amt/1.5`  
     ✅ `send    w/bob    to/0x1111111111111111111111111111111111111111    amt/1.5`  
     ❌ `send w/bobto/0x1111111111111111111111111111111111111111amt/1.5`  
     <br/>
-> + Parameters that are numbers must be written in numerical form not spelled out, and must be non-negative.  
++ Parameters that are numbers must be written in numerical form not spelled out, and must be non-negative.  
     e.g in `mark TASK_INDEX`  
     ✅ `viewblock 2`  
     ❌ `viewblock two`   
     ❌ `viewblock -2`  
     <br/>
-> + Commands that do not take in parameters will ignore any parameter provided.  
++ Commands that do not take in parameters will ignore any parameter provided.  
     Such commands include `validate`.  
     e.g. in `validate`  
     `validate dsja 2190` will be interpreted as `validate`  
