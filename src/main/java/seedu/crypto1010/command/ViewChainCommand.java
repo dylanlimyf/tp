@@ -5,6 +5,7 @@ import seedu.crypto1010.model.Block;
 import seedu.crypto1010.model.Blockchain;
 
 import java.util.List;
+import java.util.Scanner;
 
 public class ViewChainCommand extends Command {
     private static final String HELP_DESCRIPTION = """
@@ -13,7 +14,6 @@ public class ViewChainCommand extends Command {
             Displays a compact blockchain overview
             Includes total blocks, total transactions, and a compact block list
             """;
-    private static final String INVALID_FORMAT_ERROR = "Error: Invalid viewchain format. Use: viewchain";
     private static final int HASH_PREVIEW_LENGTH = 12;
 
     public ViewChainCommand() {
@@ -21,11 +21,7 @@ public class ViewChainCommand extends Command {
     }
 
     @Override
-    public void execute(String description, Blockchain blockchain) throws Crypto1010Exception {
-        if (description != null && !description.isBlank()) {
-            throw new Crypto1010Exception(INVALID_FORMAT_ERROR);
-        }
-
+    public void execute(Blockchain blockchain, Scanner in) throws Crypto1010Exception {
         List<Block> blocks = blockchain.getBlocks();
         int totalTransactions = blocks.stream()
                 .mapToInt(block -> block.getTransactions().size())
