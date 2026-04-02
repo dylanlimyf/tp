@@ -255,7 +255,7 @@ TutorialCommand uses argument-based parsing:
 
 Validation sequence:
 1. verify argument equals `start`, otherwise throw invalid format error
-2. initialise a default `Blockchain` and `WalletManager` for tutorial isolation
+2. initialize a default `Blockchain` and `WalletManager` for tutorial isolation
 3. create a `Parser` instance for handling tutorial inputs
 4. print tutorial welcome message
 5. iterate through predefined tutorial steps:
@@ -348,7 +348,6 @@ Diagram source:
 
 ### `viewchain` command implementation
 - `ViewChainCommand` is a read-only blockchain overview command.
-- It validates strict format (`viewchain` without extra arguments).
 - It computes:
   - total blocks from `blockchain.getBlocks().size()`
   - total transactions by summing each block's transaction count
