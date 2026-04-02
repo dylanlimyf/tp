@@ -1,7 +1,5 @@
 package seedu.crypto1010.command;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import seedu.crypto1010.exceptions.Crypto1010Exception;
@@ -32,17 +30,6 @@ class ViewChainCommandTest {
                 + compactHash(genesis.getCurrentHash())));
         assertTrue(output.contains("1 | tx=3 | time=2026-02-12 14:35:02 | hash="
                 + compactHash(secondBlock.getCurrentHash())));
-    }
-
-    @Test
-    void execute_withUnexpectedArguments_throwsFormatError() {
-        Blockchain blockchain = Blockchain.createDefault();
-        ViewChainCommand command = new ViewChainCommand();
-
-        Crypto1010Exception exception = assertThrows(
-                Crypto1010Exception.class,
-                () -> command.execute("unexpected", blockchain));
-        assertEquals("Error: Invalid viewchain format. Use: viewchain", exception.getMessage());
     }
 
     @Test

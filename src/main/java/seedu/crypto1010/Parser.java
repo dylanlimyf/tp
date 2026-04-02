@@ -64,7 +64,7 @@ public class Parser {
         case EXIT -> new ExitCommand();
         case SEND -> new SendCommand(arguments, walletManager);
         case KEYGEN -> new KeygenCommand(arguments, walletManager);
-        case TUTORIAL -> new TutorialCommand();
+        case TUTORIAL -> new TutorialCommand(arguments);
         };
     }
 }

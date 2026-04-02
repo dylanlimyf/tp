@@ -101,7 +101,7 @@ The application is designed for educational use and records transactions in a si
 ### `help`: Display command help
 Format: `help [c/COMMAND]`
 
-- If no command is provided (or an invalid one is provided), all commands are listed.
+- If no command is provided, all commands are listed.
 - If a valid command is provided, detailed help for that command is shown.
 
 Examples:
