@@ -6,7 +6,7 @@
 - Gradle User Manual (build and task orchestration): https://docs.gradle.org/current/userguide/userguide.html
 - SHA-256 usage through Java `MessageDigest` API from the Java standard library documentation.
 
-## Design & implementation
+## Design & Implementation
 Crypto1010 is implemented as a modular command-line application with clear separation between authentication, input parsing, command execution, domain model, and persistence.
 
 ### High-level structure
@@ -166,6 +166,99 @@ This enhancement uses multiple UML diagram types to show both structure and runt
 - Append Sequence: `docs/diagrams/BlockAppendOnSendSequence.puml`
 - Class: `docs/diagrams/BlockchainBlockClassDiagram.puml`
 
+### Wallet, WalletManager, and Key subsystem
+This section documents the enhancement: cryptographic wallet identity (`Wallet`,`Key`) and the wallet lifecycle manager
+(`WalletManager`) that powers `create`, `send`, `crossSend`, `keygen`, and address-based recipient resolution.
+
+#### Scope of enhancement
+- Cryptographic keypair generation per wallet using RSA.
+- Deterministic wallet address derivation from the public key.
+- Address-based wallet lookup without requiring wallet name input.
+
+#### Architectural-level design
+The subsystem spans three model classes:
+- `Key`: an immutable record of an RSA keypair component. Used to generate keypair and provides address to wallet.
+- `Wallet`: a mutable identity container owning a wallet's name, currency tag, keypair, derived address, and outgoing transaction history.
+- `WalletManager`: the single authority for wallet lifecycle management, providing name-based, currency-based, and address-based lookup.  
+
+Wallet is intentionally passive, holding state such as currency, but does not generate its own keys. Key generation and hence address assignment
+is triggered externally by `keygen`, separating cryptographic concerns from `Wallet`. All command layer code also interacts with any wallet
+solely through `WalletManager`
+
+#### Component-level design
+`Key` design choices
+- RSA keypair generation uses 1024-bit probable primes via SecureRandom, with fixed public exponent 65537.
+- A correctness check is performed immediately after generation and throws `Crypto1010Exception` on failure, ensuring no malformed keypair enters the system.
+- Only the public `Key` carries a wallet address with the private `Key` having null in its `walletAddress` field
+- `deriveAddress()` combines modulus and public exponent, multiplies by a large prime to spread bits, and formats as a zero-padded 40-character
+hex string with `0x` prefix to match an Ethereum-format address.
+- Large integers are truncated for CLI display via `truncate()`
+
+`Wallet` design choices:
+- Address is initialised to null and only populated after `setKeys()` is called.
+- `create w/WALLET_NAME [curr/CURRENCY]` assigns the wallet a specific currency tag used by `crossSend`
+- Wallets without `curr/` are stored as `generic` to ensure compatibility with legacy wallets.
+- `getAddress()` throws Crypto1010Exception rather than returning null to force caller to handle unkeyed state
+- Stores an optional currency code in addition to its name.
+- Currency code is normalised at construction time via `CurrencyCode.normalizeOrDefault()`, keeping currency comparison consistent
+
+`WalletManeger` design choices:
+- `createWallet()` enforces three invariants before constructing a wallet:
+name is non-blank and contains no reserved pipe delimiter (|), no wallet with the same name already exists,
+and no wallet with the same non-generic currency already exists.
+- Enforces at most one wallet per specific currency per account so `crossSend curr/...` can resolve a sender wallet unambiguously.
+- `findWalletByAddress()` silently skips wallets that throw `Crypto1010Exception` on `getAddress()`,
+so unkeyed wallets do not surface as false negatives during address lookup.
+
+#### Alternatives considered
+1. Have `Wallet` generate its own keypair internally at construction:
+   - Rejected as then cryptographic operation is coupled to object construction. 
+2. Return null from `getAddress()` when keys have not been generated:
+   - Rejected because silent null propagation makes unkeyed wallet bugs harder to detect. 
+3. Allow `WalletManager` to hold multiple wallets per currency:
+   - Rejected because `crossSend` requires unambiguous currency-to-wallet resolution.
+
+#### Trade-offs and known limitations
+- RSA with 1024-bit keys is used for simulation convenience. Real blockchain systems use secp256k1 elliptic curve cryptography.
+Address derivation mimics Ethereum address formatting but does not use proper hashing
+- Address derivation is a deterministic arithmetic transform rather than a cryptographic hash,
+meaning it does not provide preimage resistance equivalent to a production address scheme.
+- `setKeys()` does not guard against being called more than once, meaning a wallet's keypair and address can be silently overwritten.
+- Private keys are held in memory as Key objects but are not currently used for transaction signing.
+
+#### Planned next-step extension
+The current implementation establishes wallet identity through RSA keypair generation and arithmetic address derivation.
+A planned extension is to bring the cryptographic model closer to production blockchain behaviour:
+- Using `secp256k1` elliptical curve cryptography rather than RSA.
+
+Reasons for planning this enhancement:
+- Current RSA-based address derivation is structurally correct but cryptographically weaker than a hash-based scheme.
+- Allows the tutorial to teach students how production blockchains actually utilise cryptographic methods
+to derive addresses and sign transactions
+- `secp256k1` migration would allow generated addresses and keypairs to be verified against real Ethereum tooling.
+
+### `create` command implementation
+CreateCommand uses prefix-based argument parsing:
+- required: `w/`
+- optional: `curr/`
+
+Validation sequence:
+1. parse prefixes
+2. verify no wallet with the same name exists
+3. verify no wallet with the same non-generic currency exists 
+4. delegate wallet construction to `WalletManager` via `createWallet()`
+
+### `keygen` command implementation
+`KeygenCommand` uses prefix-based argument parsing:
+- required: `w/`
+
+Validation sequence:
+1. parse prefixes
+2. verify wallet exists
+3. delegate keypair generation to `Key` via `generateKeyPair()`
+4. create primes, modulus, totient, and private exponent
+5. validate key generation success
+6. pass keys to wallet
 
 ### Transaction and balance logic
 Transactions are represented in this format:
@@ -174,15 +267,6 @@ Transactions are represented in this format:
 Balance for a wallet is computed by scanning all transactions:
 - subtract amount when wallet is sender
 - add amount when wallet is receiver
-
-### Wallet currency tagging
-- `Wallet` now stores an optional currency code in addition to its name.
-- `create w/WALLET_NAME [curr/CURRENCY]` assigns the wallet a specific currency tag used by `crossSend`.
-- Wallets without `curr/` are stored as `generic` and behave exactly like legacy wallets.
-- `WalletStorage` remains backward-compatible:
-  - old `W|name` lines load as `generic`
-  - currency-tagged wallets persist as `W|name|currency`
-- `WalletManager` enforces at most one wallet per specific currency per account so `crossSend curr/...` can resolve a sender wallet unambiguously.
 
 ### `send` command implementation
 `SendCommand` uses prefix-based argument parsing:
