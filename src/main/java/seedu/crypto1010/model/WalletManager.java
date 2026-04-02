@@ -16,15 +16,23 @@ public class WalletManager {
     }
 
     public Wallet createWallet(String walletName) {
+        return createWallet(walletName, CurrencyCode.GENERIC);
+    }
+
+    public Wallet createWallet(String walletName, String currencyCode) {
         Objects.requireNonNull(walletName, "walletName must not be null");
         String normalizedName = walletName.trim();
+        String normalizedCurrency = CurrencyCode.normalizeOrDefault(currencyCode);
         if (normalizedName.isEmpty()) {
             throw new IllegalArgumentException("walletName must not be blank");
         }
         if (hasWallet(normalizedName)) {
             throw new IllegalArgumentException("wallet already exists: " + normalizedName);
         }
-        Wallet wallet = new Wallet(normalizedName);
+        if (!CurrencyCode.isGeneric(normalizedCurrency) && hasWalletForCurrency(normalizedCurrency)) {
+            throw new IllegalArgumentException("wallet currency already exists: " + normalizedCurrency);
+        }
+        Wallet wallet = new Wallet(normalizedName, normalizedCurrency);
         wallets.add(wallet);
         return wallet;
     }
@@ -53,6 +61,19 @@ public class WalletManager {
                     }
                 })
                 .findFirst();
+    }
+
+    public boolean hasWalletForCurrency(String currencyCode) {
+        String normalizedCurrency = CurrencyCode.normalizeOrDefault(currencyCode);
+        return wallets.stream()
+                .anyMatch(wallet -> wallet.getCurrencyCode().equalsIgnoreCase(normalizedCurrency));
+    }
+
+    public List<Wallet> findWalletsByCurrency(String currencyCode) {
+        String normalizedCurrency = CurrencyCode.normalizeOrDefault(currencyCode);
+        return wallets.stream()
+                .filter(wallet -> wallet.getCurrencyCode().equalsIgnoreCase(normalizedCurrency))
+                .toList();
     }
 
     public List<Wallet> getWallets() {

@@ -2,6 +2,7 @@ package seedu.crypto1010.command;
 
 import seedu.crypto1010.exceptions.Crypto1010Exception;
 import seedu.crypto1010.model.Blockchain;
+import seedu.crypto1010.model.CurrencyCode;
 import seedu.crypto1010.model.Wallet;
 import seedu.crypto1010.model.WalletManager;
 
@@ -42,7 +43,11 @@ public class ListCommand extends Command {
         for (int i = 0; i < wallets.size(); i++) {
             Wallet wallet = wallets.get(i);
             String walletName = validateWalletName(wallet);
-            System.out.print((i + 1) + ". " + walletName + " | Address: ");
+            System.out.print((i + 1) + ". " + walletName);
+            if (!CurrencyCode.isGeneric(wallet.getCurrencyCode())) {
+                System.out.print(" | Currency: " + wallet.getCurrencyCode());
+            }
+            System.out.print(" | Address: ");
             try {
                 System.out.println(wallet.getAddress());
             } catch (Crypto1010Exception e) {

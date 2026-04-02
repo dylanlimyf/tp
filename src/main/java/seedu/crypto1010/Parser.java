@@ -3,6 +3,7 @@ package seedu.crypto1010;
 import seedu.crypto1010.command.BalanceCommand;
 import seedu.crypto1010.command.Command;
 import seedu.crypto1010.command.CommandWord;
+import seedu.crypto1010.command.CrossSendCommand;
 import seedu.crypto1010.command.CreateCommand;
 import seedu.crypto1010.command.ExitCommand;
 import seedu.crypto1010.command.HelpCommand;
@@ -17,9 +18,17 @@ import seedu.crypto1010.model.WalletManager;
 
 public class Parser {
     private final WalletManager walletManager;
+    private final String currentAccountName;
+    private final Class<?> storageAnchor;
 
     public Parser(WalletManager walletManager) {
+        this(walletManager, "", Crypto1010.class);
+    }
+
+    public Parser(WalletManager walletManager, String currentAccountName, Class<?> storageAnchor) {
         this.walletManager = walletManager;
+        this.currentAccountName = currentAccountName;
+        this.storageAnchor = storageAnchor;
     }
 
     public CommandWord parseCommand(String commandWord) {
@@ -47,6 +56,7 @@ public class Parser {
         case CREATE -> new CreateCommand(arguments, walletManager);
         case BALANCE -> new BalanceCommand(arguments, walletManager);
         case HISTORY -> new HistoryCommand(arguments, walletManager);
+        case CROSSSEND -> new CrossSendCommand(arguments, walletManager, currentAccountName, storageAnchor);
         case VALIDATE -> new ValidateCommand();
         case VIEWBLOCK -> new ViewBlockCommand(arguments);
         case EXIT -> new ExitCommand();

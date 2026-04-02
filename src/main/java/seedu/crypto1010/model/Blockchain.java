@@ -2,6 +2,7 @@ package seedu.crypto1010.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,6 +21,7 @@ public class Blockchain {
     private static final String GENESIS_TRANSACTION = "Genesis Block";
     private static final Set<String> EXEMPT_BALANCE_ACCOUNTS =
             Set.of("network", "network-fee", "system", "coinbase", "genesis");
+    private static final String EXTERNAL_ACCOUNT_PREFIX = "external:";
     private static final Logger LOGGER = Logger.getLogger(Blockchain.class.getName());
 
     private final List<Block> blocks;
@@ -116,7 +118,7 @@ public class Blockchain {
         Block previousBlock = blocks.get(blocks.size() - 1);
         Block newBlock = new Block(
                 previousBlock.getIndex() + 1,
-                LocalDateTime.now(),
+                LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS),
                 previousBlock.getCurrentHash(),
                 transactions);
         blocks.add(newBlock);
@@ -203,7 +205,8 @@ public class Blockchain {
     }
 
     private boolean isExemptAccount(String normalizedAccountName) {
-        return EXEMPT_BALANCE_ACCOUNTS.contains(normalizedAccountName);
+        return EXEMPT_BALANCE_ACCOUNTS.contains(normalizedAccountName)
+                || normalizedAccountName.startsWith(EXTERNAL_ACCOUNT_PREFIX);
     }
 
     private ValidationResult invalidWithLog(String reason) {

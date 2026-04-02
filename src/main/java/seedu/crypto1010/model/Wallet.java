@@ -11,19 +11,29 @@ public class Wallet {
     private static final String NO_ADDRESS_ERROR = "Generate keys first";
 
     private final String name;
+    private final String currencyCode;
     private final List<String> transactionHistory;
     private String address;
     private Key publicKey;
     private Key privateKey;
 
     public Wallet(String name) {
+        this(name, CurrencyCode.GENERIC);
+    }
+
+    public Wallet(String name, String currencyCode) {
         this.name = Objects.requireNonNull(name).trim();
+        this.currencyCode = CurrencyCode.normalizeOrDefault(currencyCode);
         this.address = null; //set after keygen
         this.transactionHistory = new ArrayList<>();
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getCurrencyCode() {
+        return currencyCode;
     }
 
     public String getAddress() throws Crypto1010Exception {

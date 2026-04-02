@@ -15,11 +15,16 @@ public class WalletStorage {
     private static final String WALLET_PREFIX = "W|";
     private static final String TRANSACTION_PREFIX = "T|";
     private static final String END_MARKER = "E";
+    private static final String FIELD_SEPARATOR = "|";
 
     private final Path dataFilePath;
 
     public WalletStorage(Class<?> appClass) {
         this.dataFilePath = StorageUtils.resolveDataFilePath(appClass, DATA_DIR, FILE_NAME);
+    }
+
+    public WalletStorage(Class<?> appClass, String accountName) {
+        this.dataFilePath = StorageUtils.resolveAccountDataFilePath(appClass, DATA_DIR, accountName, FILE_NAME);
     }
 
     public WalletManager load() throws IOException {
@@ -36,9 +41,12 @@ public class WalletStorage {
                 continue;
             }
             if (line.startsWith(WALLET_PREFIX)) {
-                String walletName = unescape(line.substring(WALLET_PREFIX.length()));
+                String walletData = line.substring(WALLET_PREFIX.length());
+                String[] walletFields = walletData.split("\\|", 2);
+                String walletName = unescape(walletFields[0]);
+                String currencyCode = walletFields.length == 2 ? unescape(walletFields[1]) : null;
                 try {
-                    currentWallet = walletManager.createWallet(walletName);
+                    currentWallet = walletManager.createWallet(walletName, currencyCode);
                 } catch (IllegalArgumentException e) {
                     throw new IOException("Invalid wallet data: " + e.getMessage(), e);
                 }
@@ -64,7 +72,11 @@ public class WalletStorage {
     public void save(WalletManager walletManager) throws IOException {
         StringBuilder content = new StringBuilder();
         for (Wallet wallet : walletManager.getWallets()) {
-            content.append(WALLET_PREFIX).append(escape(wallet.getName())).append(System.lineSeparator());
+            content.append(WALLET_PREFIX).append(escape(wallet.getName()));
+            if (!"generic".equals(wallet.getCurrencyCode())) {
+                content.append(FIELD_SEPARATOR).append(escape(wallet.getCurrencyCode()));
+            }
+            content.append(System.lineSeparator());
             for (String transaction : wallet.getTransactionHistory()) {
                 content.append(TRANSACTION_PREFIX).append(escape(transaction)).append(System.lineSeparator());
             }

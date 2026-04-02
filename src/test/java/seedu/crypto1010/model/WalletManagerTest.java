@@ -1,5 +1,6 @@
 package seedu.crypto1010.model;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
@@ -11,5 +12,15 @@ class WalletManagerTest {
         walletManager.createWallet("alice");
 
         assertThrows(IllegalArgumentException.class, () -> walletManager.createWallet("Alice"));
+    }
+
+    @Test
+    void createWallet_duplicateSpecificCurrency_throwsIllegalArgumentException() {
+        WalletManager walletManager = new WalletManager();
+        walletManager.createWallet("alice", "btc");
+
+        IllegalArgumentException exception =
+                assertThrows(IllegalArgumentException.class, () -> walletManager.createWallet("bob", "btc"));
+        assertEquals("wallet currency already exists: btc", exception.getMessage());
     }
 }
