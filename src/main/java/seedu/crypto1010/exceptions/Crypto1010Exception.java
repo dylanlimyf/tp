@@ -5,6 +5,8 @@ package seedu.crypto1010.exceptions;
  * Allows user-friendly and personality-filled error messages.
  */
 public class Crypto1010Exception extends Exception {
+    private static final long serialVersionUID = 1L;
+
     /**
      * Creates a new {@code Crypto1010Exception} with the given message.
      *

@@ -27,13 +27,26 @@ class CreateCommandTest {
     }
 
     @Test
+    void execute_validNameWithCurrency_createsWalletWithCurrency() {
+        Blockchain blockchain = Blockchain.createDefault();
+        WalletManager walletManager = new WalletManager();
+        CreateCommand command = new CreateCommand("w/alice curr/btc", walletManager);
+
+        String output = runCommand(command, blockchain);
+
+        assertEquals("Wallet created: alice | Currency: btc" + System.lineSeparator(), output);
+        assertEquals("btc", walletManager.getWallets().get(0).getCurrencyCode());
+    }
+
+    @Test
     void execute_blankName_throwsException() {
         Blockchain blockchain = Blockchain.createDefault();
         WalletManager walletManager = new WalletManager();
         CreateCommand command = new CreateCommand("w/   ", walletManager);
 
         Crypto1010Exception exception = assertThrows(Crypto1010Exception.class, () -> command.execute(blockchain));
-        assertEquals("Error: wallet name cannot be empty. Use: create w/WALLET_NAME", exception.getMessage());
+        assertEquals("Error: wallet name cannot be empty. Use: create w/WALLET_NAME [curr/CURRENCY]",
+                exception.getMessage());
         assertEquals(0, walletManager.getWallets().size());
     }
 
@@ -44,7 +57,8 @@ class CreateCommandTest {
         CreateCommand command = new CreateCommand(null, walletManager);
 
         Crypto1010Exception exception = assertThrows(Crypto1010Exception.class, () -> command.execute(blockchain));
-        assertEquals("Error: wallet name cannot be empty. Use: create w/WALLET_NAME", exception.getMessage());
+        assertEquals("Error: wallet name cannot be empty. Use: create w/WALLET_NAME [curr/CURRENCY]",
+                exception.getMessage());
         assertEquals(0, walletManager.getWallets().size());
     }
 
@@ -67,7 +81,8 @@ class CreateCommandTest {
         CreateCommand command = new CreateCommand("alice", walletManager);
 
         Crypto1010Exception exception = assertThrows(Crypto1010Exception.class, () -> command.execute(blockchain));
-        assertEquals("Error: Invalid create format. Use: create w/WALLET_NAME", exception.getMessage());
+        assertEquals("Error: Invalid create format. Use: create w/WALLET_NAME [curr/CURRENCY]",
+                exception.getMessage());
         assertEquals(0, walletManager.getWallets().size());
     }
 
@@ -78,8 +93,20 @@ class CreateCommandTest {
         CreateCommand command = new CreateCommand("w/alice bob", walletManager);
 
         Crypto1010Exception exception = assertThrows(Crypto1010Exception.class, () -> command.execute(blockchain));
-        assertEquals("Error: wallet name must be one word without spaces. Use: create w/WALLET_NAME",
+        assertEquals("Error: wallet name must be one word without spaces. Use: create w/WALLET_NAME [curr/CURRENCY]",
             exception.getMessage());
+        assertEquals(0, walletManager.getWallets().size());
+    }
+
+    @Test
+    void execute_nameWithReservedDelimiter_throwsException() {
+        Blockchain blockchain = Blockchain.createDefault();
+        WalletManager walletManager = new WalletManager();
+        CreateCommand command = new CreateCommand("w/alice|btc", walletManager);
+
+        Crypto1010Exception exception = assertThrows(Crypto1010Exception.class, () -> command.execute(blockchain));
+        assertEquals("Error: wallet name cannot contain '|'. Use: create w/WALLET_NAME [curr/CURRENCY]",
+                exception.getMessage());
         assertEquals(0, walletManager.getWallets().size());
     }
 
@@ -93,6 +120,29 @@ class CreateCommandTest {
 
         assertEquals("Wallet created: alice" + System.lineSeparator(), output);
         assertEquals(1, walletManager.getWallets().size());
+    }
+
+    @Test
+    void execute_duplicateCurrency_throwsException() {
+        Blockchain blockchain = Blockchain.createDefault();
+        WalletManager walletManager = new WalletManager();
+        walletManager.createWallet("alice", "btc");
+        CreateCommand command = new CreateCommand("w/bob curr/btc", walletManager);
+
+        Crypto1010Exception exception = assertThrows(Crypto1010Exception.class, () -> command.execute(blockchain));
+        assertEquals("Error: a wallet for that currency already exists in this account. "
+                + "Use: create w/WALLET_NAME [curr/CURRENCY]", exception.getMessage());
+    }
+
+    @Test
+    void execute_invalidCurrency_throwsException() {
+        Blockchain blockchain = Blockchain.createDefault();
+        WalletManager walletManager = new WalletManager();
+        CreateCommand command = new CreateCommand("w/alice curr/b", walletManager);
+
+        Crypto1010Exception exception = assertThrows(Crypto1010Exception.class, () -> command.execute(blockchain));
+        assertEquals("Error: CURRENCY must be 2-10 letters or digits. "
+                + "Use: create w/WALLET_NAME [curr/CURRENCY]", exception.getMessage());
     }
 
     @Test
