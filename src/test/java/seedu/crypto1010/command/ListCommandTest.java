@@ -65,6 +65,21 @@ class ListCommandTest {
     }
 
     @Test
+    void execute_walletWithSpecificCurrency_printsCurrency() {
+        Blockchain blockchain = Blockchain.createDefault();
+        WalletManager walletManager = new WalletManager();
+        walletManager.createWallet("alice", "btc");
+        ListCommand command = new ListCommand(walletManager);
+
+        String output = runCommand(command, blockchain);
+
+        String expected = String.join(System.lineSeparator(),
+                "Wallets:",
+                "1. alice | Currency: btc | Address: Generate keys first") + System.lineSeparator();
+        assertEquals(expected, output);
+    }
+
+    @Test
     void execute_withUnexpectedArguments_throwsFormatError() {
         Blockchain blockchain = Blockchain.createDefault();
         WalletManager walletManager = new WalletManager();

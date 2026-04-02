@@ -48,6 +48,19 @@ class WalletStorageTest {
     }
 
     @Test
+    void saveThenLoad_persistsWalletCurrency() throws IOException {
+        WalletManager manager = new WalletManager();
+        manager.createWallet("alice", "btc");
+
+        WalletStorage storage = new WalletStorage(WalletStorageTest.class);
+        storage.save(manager);
+        WalletManager loaded = storage.load();
+
+        assertEquals(1, loaded.getWallets().size());
+        assertEquals("btc", loaded.getWallets().get(0).getCurrencyCode());
+    }
+
+    @Test
     void load_missingFile_returnsEmptyWalletManager() throws IOException {
         WalletStorage storage = new WalletStorage(WalletStorageTest.class);
         Files.deleteIfExists(WALLET_FILE);

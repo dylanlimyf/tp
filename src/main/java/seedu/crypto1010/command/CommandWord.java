@@ -12,6 +12,7 @@ public enum CommandWord {
     BALANCE("balance", "displays balance of wallet"),
     HISTORY("history", "shows the send history of a wallet"),
     SEND("send", "sends cryptocurrency from one wallet to another"),
+    CROSSSEND("crossSend", "sends cryptocurrency to another account user"),
 
     // Blockchain related commands
     VALIDATE("validate", "validates block chain integrity"),
