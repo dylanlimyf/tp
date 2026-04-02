@@ -29,8 +29,18 @@ public class Crypto1010 {
         printWelcome();
         BlockchainStorage blockchainStorage = new BlockchainStorage(Crypto1010.class);
         WalletStorage walletStorage = new WalletStorage(Crypto1010.class);
-        Blockchain blockchain = loadBlockchain(blockchainStorage);
-        WalletManager walletManager = loadWalletManager(walletStorage);
+        LoadResult<Blockchain> blockchainLoadResult = loadBlockchain(blockchainStorage);
+        LoadResult<WalletManager> walletLoadResult = loadWalletManager(walletStorage);
+        Blockchain blockchain = blockchainLoadResult.data();
+        WalletManager walletManager = walletLoadResult.data();
+        boolean allowBlockchainSave = blockchainLoadResult.loadedSuccessfully();
+        boolean allowWalletSave = walletLoadResult.loadedSuccessfully();
+        if (!allowBlockchainSave) {
+            System.out.println("Blockchain save is disabled to avoid overwriting existing data after load failure.");
+        }
+        if (!allowWalletSave) {
+            System.out.println("Wallet save is disabled to avoid overwriting existing data after load failure.");
+        }
         Parser parser = new Parser(walletManager);
 
         while (true) {
@@ -38,7 +48,13 @@ public class Crypto1010 {
             try {
                 message = in.nextLine().strip();
             } catch (NoSuchElementException e) {
-                saveData(blockchainStorage, walletStorage, blockchain, walletManager);
+                saveData(
+                        blockchainStorage,
+                        walletStorage,
+                        blockchain,
+                        walletManager,
+                        allowBlockchainSave,
+                        allowWalletSave);
                 break;
             }
             try {
@@ -53,11 +69,23 @@ public class Crypto1010 {
                 }
                 if (c instanceof ExitCommand) {
                     c.execute(description, blockchain);
-                    saveData(blockchainStorage, walletStorage, blockchain, walletManager);
+                    saveData(
+                            blockchainStorage,
+                            walletStorage,
+                            blockchain,
+                            walletManager,
+                            allowBlockchainSave,
+                            allowWalletSave);
                     break;
                 }
                 c.execute(description, blockchain);
-                saveData(blockchainStorage, walletStorage, blockchain, walletManager);
+                saveData(
+                        blockchainStorage,
+                        walletStorage,
+                        blockchain,
+                        walletManager,
+                        allowBlockchainSave,
+                        allowWalletSave);
             } catch (Crypto1010Exception e) {
                 System.out.println(e.getMessage());
             }
@@ -70,21 +98,21 @@ public class Crypto1010 {
         System.out.println(DIVIDER);
     }
 
-    private static Blockchain loadBlockchain(BlockchainStorage storage) {
+    private static LoadResult<Blockchain> loadBlockchain(BlockchainStorage storage) {
         try {
-            return storage.load();
+            return new LoadResult<>(storage.load(), true);
         } catch (IOException e) {
             System.out.println("Failed to load blockchain data. Starting with default blockchain.");
-            return Blockchain.createDefault();
+            return new LoadResult<>(Blockchain.createDefault(), false);
         }
     }
 
-    private static WalletManager loadWalletManager(WalletStorage storage) {
+    private static LoadResult<WalletManager> loadWalletManager(WalletStorage storage) {
         try {
-            return storage.load();
+            return new LoadResult<>(storage.load(), true);
         } catch (IOException e) {
             System.out.println("Failed to load wallet data. Starting with empty wallet list.");
-            return new WalletManager();
+            return new LoadResult<>(new WalletManager(), false);
         }
     }
 
@@ -92,16 +120,25 @@ public class Crypto1010 {
             BlockchainStorage blockchainStorage,
             WalletStorage walletStorage,
             Blockchain blockchain,
-            WalletManager walletManager) {
-        try {
-            blockchainStorage.save(blockchain);
-        } catch (IOException e) {
-            System.out.println("Failed to save blockchain data.");
+            WalletManager walletManager,
+            boolean allowBlockchainSave,
+            boolean allowWalletSave) {
+        if (allowBlockchainSave) {
+            try {
+                blockchainStorage.save(blockchain);
+            } catch (IOException e) {
+                System.out.println("Failed to save blockchain data.");
+            }
         }
-        try {
-            walletStorage.save(walletManager);
-        } catch (IOException e) {
-            System.out.println("Failed to save wallet data.");
+        if (allowWalletSave) {
+            try {
+                walletStorage.save(walletManager);
+            } catch (IOException e) {
+                System.out.println("Failed to save wallet data.");
+            }
         }
+    }
+
+    private record LoadResult<T>(T data, boolean loadedSuccessfully) {
     }
 }
