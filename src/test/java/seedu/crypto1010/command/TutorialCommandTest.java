@@ -74,4 +74,17 @@ public class TutorialCommandTest {
         String output = outputStream.toString();
         assertTrue(output.contains("Exiting tutorial..."));
     }
+
+    @Test
+    public void execute_withoutScanner_throwsCrypto1010Exception() {
+        TutorialCommand tutorialCommand = new TutorialCommand("start");
+        Blockchain blockchain = Blockchain.createDefault();
+
+        Crypto1010Exception thrown = assertThrows(
+                Crypto1010Exception.class,
+                () -> tutorialCommand.execute(blockchain)
+        );
+
+        assertEquals("Error: Tutorial requires interactive input.", thrown.getMessage());
+    }
 }

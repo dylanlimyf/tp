@@ -7,6 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import seedu.crypto1010.storage.AccountStorage;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.junit.jupiter.api.AfterEach;
@@ -99,5 +102,21 @@ class AuthenticationServiceTest {
                 () -> authenticationService.register("alice", "123", "123"));
 
         assertEquals("Error: Password must be at least 6 characters.", exception.getMessage());
+    }
+
+    @Test
+    void load_invalidStoredUsername_throwsIOException() throws Exception {
+        Path credentialsFile = tempDir.resolve("accounts").resolve("credentials.txt");
+        Files.createDirectories(credentialsFile.getParent());
+        Files.writeString(
+                credentialsFile,
+                "U|..\\evil|00112233445566778899aabbccddeeff|abcdef0123456789" + System.lineSeparator(),
+                StandardCharsets.UTF_8);
+
+        AuthenticationService authenticationService =
+                new AuthenticationService(new AccountStorage(AuthenticationServiceTest.class));
+
+        IOException exception = assertThrows(IOException.class, authenticationService::load);
+        assertTrue(exception.getMessage().startsWith("Invalid account data: username"));
     }
 }

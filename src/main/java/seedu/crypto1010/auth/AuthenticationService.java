@@ -24,6 +24,11 @@ public class AuthenticationService {
         accountsByUsername.clear();
         for (AccountCredentials credentials : accountStorage.load()) {
             String normalizedUsername = normalizeUsername(credentials.username());
+            try {
+                validateUsername(normalizedUsername);
+            } catch (AuthenticationException e) {
+                throw new IOException("Invalid account data: username '" + normalizedUsername + "' is invalid.", e);
+            }
             if (accountsByUsername.containsKey(normalizedUsername)) {
                 throw new IOException("Invalid account data: duplicate username '" + normalizedUsername + "'.");
             }

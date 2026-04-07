@@ -20,6 +20,7 @@ public class TutorialCommand extends Command {
     private static final String EXIT_MESSAGE = "Exiting tutorial...";
     private static final String WELCOME_MESSAGE = "Welcome to the tutorial!";
     private static final String INVALID_FORMAT_ERROR = "Error: Invalid tutorial format. Use tutorial start";
+    private static final String MISSING_INPUT_ERROR = "Error: Tutorial requires interactive input.";
 
     private static final String[] instructions = {
         "create w/alice",
@@ -74,6 +75,9 @@ public class TutorialCommand extends Command {
     }
 
     public void execute (Blockchain blockchain, Scanner in) throws Crypto1010Exception {
+        if (in == null) {
+            throw new Crypto1010Exception(MISSING_INPUT_ERROR);
+        }
         if (!arguments.equals("start")) {
             throw new Crypto1010Exception(INVALID_FORMAT_ERROR);
         }
