@@ -32,7 +32,10 @@ class ViewChainCommandTest {
         assertTrue(norm.contains("Total transactions: 4"));
         assertTrue(norm.contains("Blocks:"));
         assertTrue(norm.contains("================================================================================"));
-        assertTrue(norm.contains(String.format("%-6s %-10s %-20s %-40s", "Index", "Tx Count", "Timestamp", "Hash Preview")));
+        assertTrue(norm.contains(
+            String.format("%-6s %-10s %-20s %-40s",
+                "Index", "Tx Count", "Timestamp", "Hash Preview")
+        ));
         assertTrue(norm.contains("--------------------------------------------------------------------------------"));
         assertTrue(
             norm.contains(

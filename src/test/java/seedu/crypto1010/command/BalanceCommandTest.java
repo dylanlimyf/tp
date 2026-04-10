@@ -39,8 +39,9 @@ class BalanceCommandTest {
         assertEquals(normalizeOutput(expected), normalizeOutput(output));
     }
 
-        @Test
-        void execute_decimalBalance_roundsToEightDecimalPlaces() {
+
+    @Test
+    void execute_decimalBalance_roundsToEightDecimalPlaces() {
         Blockchain blockchain = new Blockchain(List.of(
             new Block(
                 0,
@@ -66,10 +67,10 @@ class BalanceCommandTest {
             "========================================",
             "");
         assertEquals(normalizeOutput(expected), normalizeOutput(output));
-        }
+    }
 
-        @Test
-        void execute_selfTransfer_keepsNetZeroBalance() {
+    @Test
+    void execute_selfTransfer_keepsNetZeroBalance() {
         Blockchain blockchain = new Blockchain(List.of(
             new Block(
                 0,
@@ -95,7 +96,7 @@ class BalanceCommandTest {
             "========================================",
             "");
         assertEquals(normalizeOutput(expected), normalizeOutput(output));
-        }
+    }
 
     @Test
     void execute_blankWalletNameAfterPrefix_throwsException() {

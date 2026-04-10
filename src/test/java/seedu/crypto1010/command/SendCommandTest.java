@@ -17,13 +17,14 @@ import java.math.BigDecimal;
 
 import org.junit.jupiter.api.Test;
 
+
 class SendCommandTest {
-        private String normalizeOutput(String s) {
-            return s.replaceAll("\r\n", "\n").replaceAll("[ \t]+$", "").trim();
-        }
     private static final String ETH_ADDRESS = "0x1111111111111111111111111111111111111111";
     private static final String BTC_ADDRESS = "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kygt080";
     private static final String SOL_ADDRESS = "So11111111111111111111111111111111111111112";
+    private String normalizeOutput(String s) {
+        return s.replaceAll("\r\n", "\n").replaceAll("[ \t]+$", "").trim();
+    }
 
     @Test
     void execute_validSendWithDefaultSpeed_recordsTransactionAndHistory() {
