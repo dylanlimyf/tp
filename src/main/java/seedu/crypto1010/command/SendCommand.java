@@ -114,11 +114,7 @@ public class SendCommand extends Command {
     }
 
     private BigDecimal parsePositiveAmount(String amountArgument) throws Crypto1010Exception {
-        BigDecimal amount = parseDecimal(amountArgument);
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new Crypto1010Exception(AMOUNT_INVALID_ERROR + " " + SEND_FORMAT);
-        }
-        return amount;
+        return CommandParserUtil.parsePositiveDecimal(amountArgument, AMOUNT_INVALID_ERROR, SEND_FORMAT);
     }
 
     private String resolveSpeed(String speedArgument) throws Crypto1010Exception {

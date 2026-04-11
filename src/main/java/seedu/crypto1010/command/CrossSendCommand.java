@@ -131,15 +131,7 @@ public class CrossSendCommand extends Command {
     }
 
     private BigDecimal parsePositiveAmount(String amountText) throws Crypto1010Exception {
-        try {
-            BigDecimal amount = new BigDecimal(amountText);
-            if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-                throw new Crypto1010Exception(AMOUNT_INVALID_ERROR + " " + COMMAND_FORMAT);
-            }
-            return amount;
-        } catch (NumberFormatException e) {
-            throw new Crypto1010Exception(AMOUNT_INVALID_ERROR + " " + COMMAND_FORMAT);
-        }
+        return CommandParserUtil.parsePositiveDecimal(amountText, AMOUNT_INVALID_ERROR, COMMAND_FORMAT);
     }
 
     private String normalizeCurrency(String currencyCode) throws Crypto1010Exception {
