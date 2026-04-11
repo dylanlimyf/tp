@@ -188,6 +188,23 @@ class CrossSendCommandTest {
                 + "Use: crossSend acc/ACCOUNT_NAME amt/AMOUNT curr/CURRENCY", exception.getMessage());
     }
 
+    @Test
+    void execute_extremeScientificAmount_throwsException() {
+        WalletManager senderWalletManager = new WalletManager();
+        senderWalletManager.createWallet("main", "btc");
+        Blockchain senderBlockchain = blockchainWithBalance("main", "10");
+        CrossSendCommand command =
+                new CrossSendCommand("acc/receiver amt/1e-100000000 curr/btc", senderWalletManager,
+                        "sender", CrossSendCommandTest.class);
+
+        Crypto1010Exception exception = assertThrows(
+                Crypto1010Exception.class,
+                () -> command.execute(senderBlockchain));
+
+        assertEquals("Error: Amount must be a positive number. "
+                + "Use: crossSend acc/ACCOUNT_NAME amt/AMOUNT curr/CURRENCY", exception.getMessage());
+    }
+
     private Blockchain blockchainWithBalance(String walletName, String amount) {
         Block genesis = new Block(
                 0,

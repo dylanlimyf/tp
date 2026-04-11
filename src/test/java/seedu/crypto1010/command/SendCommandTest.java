@@ -93,6 +93,19 @@ class SendCommandTest {
     }
 
     @Test
+    void execute_extremeScientificAmount_throwsException() {
+        Blockchain blockchain = Blockchain.createDefault();
+        WalletManager walletManager = new WalletManager();
+        walletManager.createWallet("bob");
+        SendCommand command = new SendCommand("w/bob to/" + ETH_ADDRESS + " amt/1e-100000000", walletManager);
+
+        Crypto1010Exception exception = assertThrows(Crypto1010Exception.class, () -> command.execute(blockchain));
+        assertEquals("Error: Amount must be a positive number. Use: send w/WALLET_NAME"
+                + " to/RECIPIENT_ADDRESS amt/AMOUNT [speed/SPEED] [fee/FEE] [note/MEMO]",
+                exception.getMessage());
+    }
+
+    @Test
     void execute_invalidFormat_throwsException() {
         Blockchain blockchain = Blockchain.createDefault();
         WalletManager walletManager = new WalletManager();

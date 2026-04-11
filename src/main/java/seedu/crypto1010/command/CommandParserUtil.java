@@ -7,6 +7,8 @@ import java.math.BigDecimal;
 public final class CommandParserUtil {
 
     private static final String WALLET_PREFIX = "w/";
+    private static final int MAX_SIGNIFICANT_DIGITS = 50;
+    private static final int MAX_ABSOLUTE_SCALE = 32;
 
     private CommandParserUtil() {
     }
@@ -48,6 +50,9 @@ public final class CommandParserUtil {
         try {
             BigDecimal amount = new BigDecimal(amountText);
             if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+                throw new Crypto1010Exception(invalidAmountError + " " + commandFormat);
+            }
+            if (amount.precision() > MAX_SIGNIFICANT_DIGITS || Math.abs(amount.scale()) > MAX_ABSOLUTE_SCALE) {
                 throw new Crypto1010Exception(invalidAmountError + " " + commandFormat);
             }
             return amount;
