@@ -124,21 +124,15 @@ class CreateCommandTest {
     }
 
     @Test
-    void execute_blankStoredArguments_usesDescriptionFallback() {
+    void execute_blankArguments_throwsException() {
         Blockchain blockchain = Blockchain.createDefault();
         WalletManager walletManager = new WalletManager();
-        CreateCommand command = new CreateCommand("w/alice", walletManager);
+        CreateCommand command = new CreateCommand("", walletManager);
 
-        String output = runCommand(command, blockchain);
-
-        String expected = "\nWallet Created\n" +
-            "========================================\n" +
-            String.format("%-12s: %s\n", "Wallet", "alice") +
-            "========================================\n";
-        String normExpected = expected.replaceAll("\\r\\n", "\n").replaceAll("[ \t]+$", "");
-        String normOutput = output.replaceAll("\\r\\n", "\n").replaceAll("[ \t]+$", "");
-        assertEquals(normExpected, normOutput);
-        assertEquals(1, walletManager.getWallets().size());
+        Crypto1010Exception exception = assertThrows(Crypto1010Exception.class, () -> command.execute(blockchain));
+        assertEquals("Error: wallet name cannot be empty. Use: create w/WALLET_NAME [curr/CURRENCY]",
+                exception.getMessage());
+        assertEquals(0, walletManager.getWallets().size());
     }
 
     @Test

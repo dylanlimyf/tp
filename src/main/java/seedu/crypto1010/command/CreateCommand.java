@@ -44,7 +44,7 @@ public class CreateCommand extends Command {
 
     @Override
     public void execute(Blockchain blockchain, Scanner in) throws Crypto1010Exception {
-        ParsedCreateArguments parsedArguments = parseArguments(resolveArguments(arguments));
+        ParsedCreateArguments parsedArguments = parseArguments(arguments);
         String walletName = parsedArguments.walletName();
         String currencyCode = parsedArguments.currencyCode();
 
@@ -64,13 +64,6 @@ public class CreateCommand extends Command {
             System.out.printf("%-12s: %s%n", "Currency", currencyCode);
         }
         System.out.println("=".repeat(40));
-    }
-
-    private String resolveArguments(String description) {
-        if (arguments == null || arguments.isBlank()) {
-            return description;
-        }
-        return arguments;
     }
 
     private ParsedCreateArguments parseArguments(String args) throws Crypto1010Exception {
