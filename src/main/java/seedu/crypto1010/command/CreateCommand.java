@@ -30,6 +30,8 @@ public class CreateCommand extends Command {
             "Error: Invalid create format. Use: create w/WALLET_NAME [curr/CURRENCY]";
     private static final String CREATE_FORMAT = "Use: create w/WALLET_NAME [curr/CURRENCY]";
     private static final String CURRENCY_INVALID_ERROR = "Error: CURRENCY must be 2-10 letters or digits.";
+    private static final String CURRENCY_GENERIC_NOT_ALLOWED_ERROR =
+            "Error: CURRENCY must be specific. Omit curr/ to create a generic wallet.";
     private static final String WALLET_PREFIX = "w/";
     private static final String CURRENCY_PREFIX = "curr/";
 
@@ -90,6 +92,9 @@ public class CreateCommand extends Command {
                 String parsedCurrency = token.substring(CURRENCY_PREFIX.length()).trim();
                 if (!CurrencyCode.isValidSpecificCurrency(parsedCurrency)) {
                     throw new Crypto1010Exception(CURRENCY_INVALID_ERROR + " " + CREATE_FORMAT);
+                }
+                if (CurrencyCode.isGeneric(parsedCurrency)) {
+                    throw new Crypto1010Exception(CURRENCY_GENERIC_NOT_ALLOWED_ERROR + " " + CREATE_FORMAT);
                 }
                 currencyCode = CurrencyCode.normalize(parsedCurrency);
                 continue;

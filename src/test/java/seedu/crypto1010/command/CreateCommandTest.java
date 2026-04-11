@@ -159,6 +159,17 @@ class CreateCommandTest {
     }
 
     @Test
+    void execute_genericCurrency_throwsException() {
+        Blockchain blockchain = Blockchain.createDefault();
+        WalletManager walletManager = new WalletManager();
+        CreateCommand command = new CreateCommand("w/alice curr/generic", walletManager);
+
+        Crypto1010Exception exception = assertThrows(Crypto1010Exception.class, () -> command.execute(blockchain));
+        assertEquals("Error: CURRENCY must be specific. Omit curr/ to create a generic wallet. "
+                + "Use: create w/WALLET_NAME [curr/CURRENCY]", exception.getMessage());
+    }
+
+    @Test
     void constructor_nullWalletManager_throwsException() {
         assertThrows(NullPointerException.class, () -> new CreateCommand("w/alice", null));
     }
