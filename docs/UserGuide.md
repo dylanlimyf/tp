@@ -30,8 +30,14 @@ The application is designed for educational use and records transactions in a si
 ---
 ## Quick Start
 1. Install Java 17.
-1. Clone this repository and open it in a terminal.
-1. Run the application:
+1. Download the latest `Crypto1010.jar` release file.
+1. Open a terminal in the folder containing the jar and run:
+   ```bash
+   java -jar Crypto1010.jar
+   ```
+1. Enter commands in the terminal.
+1. At startup, choose `login` or `register`, then enter your username and password to access your account-specific wallets and blockchain data.
+1. (For developers running from source) clone this repository and run:
    ```bash
    ./gradlew run
    ```
@@ -39,8 +45,6 @@ The application is designed for educational use and records transactions in a si
    ```powershell
    .\gradlew run
    ```
-1. Enter commands in the terminal.
-1. At startup, choose `login` or `register`, then enter your username and password to access your account-specific wallets and blockchain data.
 <br>
 
 ---
