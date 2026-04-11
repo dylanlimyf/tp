@@ -5,6 +5,7 @@ import seedu.crypto1010.auth.AuthenticationService;
 import seedu.crypto1010.command.Command;
 import seedu.crypto1010.command.ExitCommand;
 import seedu.crypto1010.command.LogoutCommand;
+import seedu.crypto1010.command.TutorialCommand;
 import seedu.crypto1010.exceptions.Crypto1010Exception;
 import seedu.crypto1010.model.Blockchain;
 import seedu.crypto1010.model.WalletManager;
@@ -104,6 +105,16 @@ public class Crypto1010 {
                 }
 
                 c.execute(blockchain, in);
+                if (c instanceof TutorialCommand tutorialCommand && tutorialCommand.isExitRequested()) {
+                    saveData(
+                            blockchainStorage,
+                            walletStorage,
+                            blockchain,
+                            walletManager,
+                            allowBlockchainSave,
+                            allowWalletSave);
+                    return SessionOutcome.EXIT;
+                }
                 long durationMs = (System.nanoTime() - startNs) / 1_000_000;
                 String commandName = c.getClass().getSimpleName();
                 LOGGER.fine(() -> "Command executed successfully: " + commandName + " (" + durationMs + " ms)");

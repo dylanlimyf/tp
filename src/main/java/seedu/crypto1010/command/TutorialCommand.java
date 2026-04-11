@@ -69,10 +69,12 @@ public class TutorialCommand extends Command {
     };
 
     private final String arguments;
+    private boolean exitRequested;
 
     public TutorialCommand(String arguments) {
         super(HELP_DESCRIPTION);
         this.arguments = arguments;
+        this.exitRequested = false;
     }
 
     public void execute (Blockchain blockchain, Scanner in) throws Crypto1010Exception {
@@ -95,7 +97,12 @@ public class TutorialCommand extends Command {
             System.out.println(INSTRUCTION_MESSAGE);
             System.out.println(instructions[index]);
             String input = in.nextLine().strip();
-            if (input.equals("tutorial exit") || input.equals("exit")) {
+            if (input.equals("exit")) {
+                exitRequested = true;
+                new ExitCommand().execute(blockchain, in);
+                return;
+            }
+            if (input.equals("tutorial exit")) {
                 break;
             } else if (input.equals(instructions[index]) ||
                     (index == 9 && input.startsWith("send w/bob amt/3 to/"))) {
@@ -111,5 +118,9 @@ public class TutorialCommand extends Command {
             }
         }
         System.out.println(EXIT_MESSAGE);
+    }
+
+    public boolean isExitRequested() {
+        return exitRequested;
     }
 }
