@@ -53,8 +53,12 @@ public final class CliVisuals {
     }
 
     public static void printLogo(List<String> logoLines, String slogan) {
-        for (String line : safeLines(logoLines)) {
-            System.out.println(color(line, ANSI_MAGENTA));
+        if (logoLines != null) {
+            for (String line : logoLines) {
+                if (line != null) {
+                    System.out.println(color(line, ANSI_MAGENTA));
+                }
+            }
         }
         if (slogan != null && !slogan.isBlank()) {
             System.out.println(color(slogan, ANSI_CYAN));
