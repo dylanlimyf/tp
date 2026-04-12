@@ -15,10 +15,11 @@ import seedu.crypto1010.storage.WalletStorage;
 import seedu.crypto1010.ui.CliVisuals;
 import seedu.crypto1010.ui.InteractiveShell;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -32,7 +33,7 @@ public class Crypto1010 {
     private static final String ACCOUNT_SELECTION_ERROR =
             "Error: Invalid selection. Choose login, register, or exit.";
     private static final String STARTUP_SLOGAN = "Learn blockchain by building and breaking it safely.";
-    private static final Path LOGO_PATH = Path.of("config", "crypto1010logo.txt");
+    private static final String LOGO_RESOURCE_PATH = "config/crypto1010logo.txt";
 
     /**
      * Main entry-point for the java.crypto1010.Crypto1010 application.
@@ -60,11 +61,12 @@ public class Crypto1010 {
     }
 
     private static List<String> loadLogoLines() {
-        if (!Files.exists(LOGO_PATH)) {
+        InputStream logoStream = Crypto1010.class.getClassLoader().getResourceAsStream(LOGO_RESOURCE_PATH);
+        if (logoStream == null) {
             return List.of();
         }
-        try {
-            return Files.readAllLines(LOGO_PATH, StandardCharsets.UTF_8);
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(logoStream, StandardCharsets.UTF_8))) {
+            return reader.lines().toList();
         } catch (IOException e) {
             return List.of();
         }

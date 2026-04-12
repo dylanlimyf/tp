@@ -9,6 +9,7 @@ public final class CommandParserUtil {
     private static final String WALLET_PREFIX = "w/";
     private static final int MAX_SIGNIFICANT_DIGITS = 50;
     private static final int MAX_ABSOLUTE_SCALE = 32;
+    private static final int MAX_WALLET_NAME_LENGTH = 32;
 
     private CommandParserUtil() {
     }
@@ -37,6 +38,10 @@ public final class CommandParserUtil {
                                             String commandFormat) throws Crypto1010Exception {
         if (walletName == null || walletName.isEmpty()) {
             throw new Crypto1010Exception(emptyNameError + " " + commandFormat);
+        }
+        if (walletName.length() > MAX_WALLET_NAME_LENGTH) {
+            throw new Crypto1010Exception(
+                    "Error: wallet name must be at most " + MAX_WALLET_NAME_LENGTH + " characters. " + commandFormat);
         }
         if (walletName.chars().anyMatch(Character::isWhitespace)) {
             throw new Crypto1010Exception(whitespaceError + " " + commandFormat);

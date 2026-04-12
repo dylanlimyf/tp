@@ -121,6 +121,18 @@ class CreateCommandTest {
     }
 
     @Test
+    void execute_nameTooLong_throwsException() {
+        Blockchain blockchain = Blockchain.createDefault();
+        WalletManager walletManager = new WalletManager();
+        CreateCommand command = new CreateCommand("w/abcdefghijklmnopqrstuvwxyz1234567", walletManager);
+
+        Crypto1010Exception exception = assertThrows(Crypto1010Exception.class, () -> command.execute(blockchain));
+        assertEquals("Error: wallet name must be at most 32 characters. Use: create w/WALLET_NAME [curr/CURRENCY]",
+                exception.getMessage());
+        assertEquals(0, walletManager.getWallets().size());
+    }
+
+    @Test
     void execute_blankArguments_throwsException() {
         Blockchain blockchain = Blockchain.createDefault();
         WalletManager walletManager = new WalletManager();

@@ -20,7 +20,7 @@ public final class CliVisuals {
     public static void printPanel(String title, List<String> lines) {
         String border = "+" + "-".repeat(PANEL_WIDTH - 2) + "+";
         System.out.println(accent(border));
-        System.out.println(accent("| ") + titleText(fit(title, PANEL_WIDTH - 4)) + accent(" |"));
+        System.out.println(accent("| ") + titleText(fit(sanitizeForTerminal(title), PANEL_WIDTH - 4)) + accent(" |"));
         System.out.println(accent(border));
         for (String line : safeLines(lines)) {
             for (String wrapped : wrapLine(line, PANEL_WIDTH - 4)) {
@@ -31,23 +31,23 @@ public final class CliVisuals {
     }
 
     public static void printInfo(String message) {
-        System.out.println(color(message, ANSI_GREEN));
+        System.out.println(color(sanitizeForTerminal(message), ANSI_GREEN));
     }
 
     public static void printWarning(String message) {
-        System.out.println(color(message, ANSI_YELLOW));
+        System.out.println(color(sanitizeForTerminal(message), ANSI_YELLOW));
     }
 
     public static void printError(String message) {
-        System.out.println(color(message, ANSI_RED));
+        System.out.println(color(sanitizeForTerminal(message), ANSI_RED));
     }
 
     public static void printLegacySection(String title, List<String> lines) {
         String divider = "=".repeat(LEGACY_WIDTH);
         System.out.println(accent(divider));
-        System.out.println(titleText(title));
+        System.out.println(titleText(sanitizeForTerminal(title)));
         for (String line : safeLines(lines)) {
-            System.out.println(line == null ? "" : line);
+            System.out.println(sanitizeForTerminal(line));
         }
         System.out.println(accent(divider));
     }
@@ -56,12 +56,12 @@ public final class CliVisuals {
         if (logoLines != null) {
             for (String line : logoLines) {
                 if (line != null) {
-                    System.out.println(color(line, ANSI_MAGENTA));
+                    System.out.println(color(sanitizeForTerminal(line), ANSI_MAGENTA));
                 }
             }
         }
         if (slogan != null && !slogan.isBlank()) {
-            System.out.println(color(slogan, ANSI_CYAN));
+            System.out.println(color(sanitizeForTerminal(slogan), ANSI_CYAN));
         }
     }
 
@@ -103,7 +103,7 @@ public final class CliVisuals {
     }
 
     private static String safeCell(String value) {
-        return value == null ? "" : value;
+        return sanitizeForTerminal(value);
     }
 
     private static String joinCells(List<String> row, int[] widths) {
@@ -124,7 +124,7 @@ public final class CliVisuals {
     }
 
     private static List<String> wrapLine(String line, int width) {
-        String value = line == null ? "" : line;
+        String value = sanitizeForTerminal(line);
         if (value.length() <= width) {
             return List.of(value);
         }
@@ -164,5 +164,21 @@ public final class CliVisuals {
             return text;
         }
         return ansiColor + text + ANSI_RESET;
+    }
+
+    private static String sanitizeForTerminal(String value) {
+        if (value == null || value.isEmpty()) {
+            return "";
+        }
+        StringBuilder out = new StringBuilder(value.length());
+        for (int i = 0; i < value.length(); i++) {
+            char c = value.charAt(i);
+            if (c == '\u001B' || c == '\u009B' || Character.isISOControl(c)) {
+                out.append('?');
+            } else {
+                out.append(c);
+            }
+        }
+        return out.toString();
     }
 }
