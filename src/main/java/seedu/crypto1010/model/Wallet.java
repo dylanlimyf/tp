@@ -48,8 +48,17 @@ public class Wallet {
         return address;
     }
 
+    public KeyPair getKeyPair() {
+        return keyPair;
+    }
+
     public boolean hasKeyPair() {
         return keyPair != null;
+    }
+
+    public void restoreKeyPair(KeyPair keyPair) {
+        this.keyPair = keyPair;
+        this.address = keyPair.getWalletAddress();
     }
 
     public void addTransaction(String transactionEntry) {
@@ -63,7 +72,10 @@ public class Wallet {
         return Collections.unmodifiableList(transactionHistory);
     }
 
-    public void setKeys(KeyPair keys) {
+    public void setKeys(KeyPair keys) throws Crypto1010Exception {
+        if (this.keyPair != null) {
+            throw new Crypto1010Exception("Error: wallet already has a key pair.");
+        }
         String generatedAddress = keys.getWalletAddress();
         if (generatedAddress == null || generatedAddress.isBlank()) {
             throw new IllegalArgumentException(INVALID_KEYS_ERROR);

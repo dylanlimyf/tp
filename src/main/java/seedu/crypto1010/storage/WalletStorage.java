@@ -1,10 +1,12 @@
 package seedu.crypto1010.storage;
 
 import seedu.crypto1010.exceptions.Crypto1010Exception;
+import seedu.crypto1010.model.KeyPair;
 import seedu.crypto1010.model.Wallet;
 import seedu.crypto1010.model.WalletManager;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -58,14 +60,31 @@ public class WalletStorage {
             if (line.startsWith(WALLET_PREFIX)) {
                 // A wallet header starts a new wallet context for the following transaction lines.
                 String walletData = line.substring(WALLET_PREFIX.length());
-                String[] walletFields = walletData.split("\\|", 2);
+                String[] walletFields = walletData.split("\\|", 6);
                 String walletName = unescape(walletFields[0]);
-                String currencyCode = walletFields.length == 2 ? unescape(walletFields[1]) : null;
+                String currencyCode = walletFields.length >= 2 ? unescape(walletFields[1]) : null;
                 try {
                     currentWallet = walletManager.createWallet(walletName, currencyCode);
                 } catch (Crypto1010Exception e) {
                     throw new IOException("Invalid wallet data: " + e.getMessage(), e);
                 }
+
+                if (walletFields.length == 6) {
+                    try {
+                        String address = unescape(walletFields[2]);
+                        BigInteger publicKeyX = new BigInteger(walletFields[3], 16);
+                        BigInteger publicKeyY = new BigInteger(walletFields[4], 16);
+                        BigInteger privateKey = new BigInteger(walletFields[5], 16);
+                        currentWallet.restoreKeyPair(
+                                KeyPair.restore(privateKey, publicKeyX, publicKeyY,
+                                                address, currentWallet.getCurrencyCode()));
+                    } catch (Exception e) {
+                        System.out.println("[Warning] Key data for wallet '" + currentWallet.getName()
+                                                   + "' is corrupted and could not be restored. "
+                                                   + "Please run keygen on this wallet to generate new keys.");
+                    }
+                }
+
                 walletCount++;
                 if (walletCount > MAX_WALLET_COUNT) {
                     throw new IOException("Invalid wallet data: too many wallets.");
@@ -104,10 +123,26 @@ public class WalletStorage {
     public void save(WalletManager walletManager) throws IOException {
         StringBuilder content = new StringBuilder();
         for (Wallet wallet : walletManager.getWallets()) {
-            content.append(WALLET_PREFIX).append(escape(wallet.getName()));
-            if (!"generic".equals(wallet.getCurrencyCode())) {
-                content.append(FIELD_SEPARATOR).append(escape(wallet.getCurrencyCode()));
+            content.append(WALLET_PREFIX)
+                    .append(escape(wallet.getName()))
+                    .append(FIELD_SEPARATOR)
+                    .append(escape(wallet.getCurrencyCode()));
+
+            if (wallet.hasKeyPair()) {
+                try {
+                    content.append(FIELD_SEPARATOR)
+                            .append(escape(wallet.getAddress()))
+                            .append(FIELD_SEPARATOR)
+                            .append(wallet.getKeyPair().getPublicKeyX().toString(16))
+                            .append(FIELD_SEPARATOR)
+                            .append(wallet.getKeyPair().getPublicKeyY().toString(16))
+                            .append(FIELD_SEPARATOR)
+                            .append(wallet.getKeyPair().getPrivateKey().toString(16));
+                } catch (Crypto1010Exception e) {
+                    // address not set — skip key fields
+                }
             }
+
             content.append(System.lineSeparator());
             for (String transaction : wallet.getTransactionHistory()) {
                 content.append(TRANSACTION_PREFIX).append(escape(transaction)).append(System.lineSeparator());
