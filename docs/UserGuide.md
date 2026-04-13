@@ -7,29 +7,30 @@ The application is designed for educational use and records transactions in a si
 
 ---
 ## Table of Contents
-- [Quick Start](#quick-start)
-- [Startup Authentication](#startup-authentication)
-- [Features](#features)
-  - [CLI Productivity Features](#cli-productivity-features)
-  - [Display command help: `help`](#help-display-command-help)
-  - [Enter tutorial mode: `tutorial`](#tutorial-enter-tutorial-mode)
-  - [Create a wallet: `create`](#create-create-a-wallet)
-  - [List wallets: `list`](#list-list-wallets)
-  - [Generate keys for a wallet: `keygen`](#keygen-generate-keys-for-a-wallet)
-  - [Show wallet balance: `balance`](#balance-show-wallet-balance)
-  - [Create a transfer transaction: `send`](#send-create-a-transfer-transaction)
-  - [Cross-account transfer: `crossSend`](#crosssend-cross-account-transfer)
-  - [Show wallet send history: `history`](#history-show-wallet-send-history)
-  - [Validate blockchain integrity: `validate`](#validate-validate-blockchain-integrity)
-  - [View blockchain overview: `viewchain`](#viewchain-view-blockchain-overview)
-  - [View one block: `viewblock`](#viewblock-view-one-block)
-  - [Log out of the current account: `logout`](#logout-log-out-of-the-current-account)
-  - [Save and terminate: `exit`](#exit-save-and-terminate)
-- [Coming Soon](#coming-soon)
-- [Command Summary](#command-summary)
-- [Data and Persistence](#data-and-persistence)
-- [FAQ](#faq)
+- [Quick Start](#ug-quick-start)
+- [Startup Authentication](#ug-startup-authentication)
+- [Features](#ug-features)
+  - [CLI Productivity Features](#ug-cli-productivity-features)
+  - [Display command help: `help`](#cmd-help)
+  - [Enter tutorial mode: `tutorial`](#cmd-tutorial)
+  - [Create a wallet: `create`](#cmd-create)
+  - [List wallets: `list`](#cmd-list)
+  - [Generate keys for a wallet: `keygen`](#cmd-keygen)
+  - [Show wallet balance: `balance`](#cmd-balance)
+  - [Create a transfer transaction: `send`](#cmd-send)
+  - [Cross-account transfer: `crossSend`](#cmd-crosssend)
+  - [Show wallet send history: `history`](#cmd-history)
+  - [Validate blockchain integrity: `validate`](#cmd-validate)
+  - [View blockchain overview: `viewchain`](#cmd-viewchain)
+  - [View one block: `viewblock`](#cmd-viewblock)
+  - [Log out of the current account: `logout`](#cmd-logout)
+  - [Save and terminate: `exit`](#cmd-exit)
+- [Coming Soon](#ug-coming-soon)
+- [Command Summary](#ug-command-summary)
+- [Data and Persistence](#ug-data-and-persistence)
+- [FAQ](#ug-faq)
 ---
+<span id="ug-quick-start"></span>
 ## Quick Start
 1. Install Java 17.
 1. Download the latest `Crypto1010.jar` release file.
@@ -49,6 +50,7 @@ The application is designed for educational use and records transactions in a si
    ```
 
 ---
+<span id="ug-startup-authentication"></span>
 ## Startup Authentication
 - On launch, Crypto1010 requires an account before loading any wallets or blockchain data.
 - Choose `register` if you are a new user. Registration logs you in immediately after the account is created.
@@ -58,7 +60,9 @@ The application is designed for educational use and records transactions in a si
 - Usernames are case-insensitive and must be 3-20 characters using letters, numbers, `_`, or `-`.
 - Passwords must be at least 6 characters long.
 
+<span id="ug-features"></span>
 ## Features
+<span id="ug-cli-productivity-features"></span>
 ### CLI Productivity Features
 - On launch, Crypto1010 prints an ASCII logo and startup slogan.
 - During authenticated command mode, the prompt is `USERNAME@crypto1010 ~`.
@@ -99,6 +103,7 @@ The application is designed for educational use and records transactions in a si
 + Commands without parameters ignore extra trailing text.  
   e.g. `validate anything` is interpreted as `validate`.
 
+<span id="cmd-help"></span>
 ### `help`: Display command help
 Format: `help [c/COMMAND]`
 
@@ -109,6 +114,7 @@ Examples:
 - `help`
 - `help c/send`
 
+<span id="cmd-tutorial"></span>
 ### `tutorial`: Enter tutorial mode
 Format: `tutorial start`
 
@@ -117,6 +123,7 @@ Format: `tutorial start`
 - Type `tutorial exit` to leave tutorial mode.
 - Type `exit` during tutorial to exit the app globally.
 
+<span id="cmd-create"></span>
 ### `create`: Create a wallet
 Format: `create w/WALLET_NAME [curr/CURRENCY]`
 
@@ -131,12 +138,14 @@ Examples:
 - `create w/bob`
 - `create w/main curr/btc`
 
+<span id="cmd-list"></span>
 ### `list`: List wallets
 Format: `list`
 
 - Shows all wallets in the current account (including previously saved wallets loaded at login).
 - Wallets created with a specific currency display that currency in the list.
 
+<span id="cmd-keygen"></span>
 ### `keygen`: Generate keys for a wallet
 Format: `keygen w/WALLET_NAME`
 
@@ -149,6 +158,7 @@ Format: `keygen w/WALLET_NAME`
 Example:
 - `keygen w/alice`
 
+<span id="cmd-balance"></span>
 ### `balance`: Show wallet balance
 Format: `balance w/WALLET_NAME`
 
@@ -158,6 +168,7 @@ Format: `balance w/WALLET_NAME`
 Example:
 - `balance w/bob`
 
+<span id="cmd-send"></span>
 ### `send`: Create a transfer transaction
 Format: `send w/WALLET_NAME to/RECIPIENT_ADDRESS amt/AMOUNT [speed/SPEED] [fee/FEE] [note/MEMO]`
 
@@ -176,6 +187,7 @@ Examples:
 - `send w/bob to/0x1111111111111111111111111111111111111111 amt/2 speed/fast`
 - `send w/bob to/0x1111111111111111111111111111111111111111 amt/2 fee/0.02 note/Urgent payment`
 
+<span id="cmd-crosssend"></span>
 ### `crossSend`: Cross-account transfer
 Format: `crossSend acc/ACCOUNT_NAME amt/AMOUNT curr/CURRENCY`
 
@@ -189,6 +201,7 @@ Examples:
 - `crossSend acc/alice amt/2 curr/btc`
 - `crossSend acc/bob amt/0.5 curr/eth`
 
+<span id="cmd-history"></span>
 ### `history`: Show wallet send history
 Format: `history w/WALLET_NAME`
 
@@ -199,12 +212,14 @@ Format: `history w/WALLET_NAME`
 Example:
 - `history w/bob`
 
+<span id="cmd-validate"></span>
 ### `validate`: Validate blockchain integrity
 Format: `validate`
 
 - Verifies hashes, previous-hash links, and transaction data quality for all blocks.
 - Reports either success or the first detected failure reason.
 
+<span id="cmd-viewchain"></span>
 ### `viewchain`: View blockchain overview
 Format: `viewchain`
 
@@ -216,6 +231,7 @@ Format: `viewchain`
 Example:
 - `viewchain`
 
+<span id="cmd-viewblock"></span>
 ### `viewblock`: View one block
 Format: `viewblock INDEX`
 
@@ -224,6 +240,7 @@ Format: `viewblock INDEX`
 Example:
 - `viewblock 2`
 
+<span id="cmd-logout"></span>
 ### `logout`: Log out of the current account
 Format: `logout`
 
@@ -231,6 +248,7 @@ Format: `logout`
 - After entering `logout`, Crypto1010 prompts for confirmation.
 - Type `y` to confirm logout or `n` to stay in the current account.
 
+<span id="cmd-exit"></span>
 ### `exit`: Save and terminate
 Format: `exit`
 
@@ -239,6 +257,7 @@ Format: `exit`
 - If load failed due to corrupted data, save is intentionally disabled to avoid overwriting files.
 
 ---
+<span id="ug-coming-soon"></span>
 ## Coming Soon
 Based on planned work tracked in project discussions/issues, the next user-facing feature is:
 
@@ -249,6 +268,7 @@ Based on planned work tracked in project discussions/issues, the next user-facin
 This feature is not available yet in the current release.
 
 ---
+<span id="ug-command-summary"></span>
 ## Command Summary
 - `help [c/COMMAND]`
 - `tutorial start`
@@ -266,6 +286,7 @@ This feature is not available yet in the current release.
 - `exit`
 
 ---
+<span id="ug-data-and-persistence"></span>
 ## Data and Persistence
 - Account credentials are stored in `data/accounts/credentials.txt`.
 - Each account has its own blockchain data at `data/accounts/USERNAME/blockchain.json`.
@@ -275,6 +296,7 @@ This feature is not available yet in the current release.
 - Corrupted blockchain or wallet data triggers safe fallback, and saving is disabled to avoid overwriting that account's files.
 
 ---
+<span id="ug-faq"></span>
 ## FAQ
 **Q**: Do different users share wallets and blockchain data?  
 **A**: No. Each login account gets its own wallet list and blockchain file under its account directory.
