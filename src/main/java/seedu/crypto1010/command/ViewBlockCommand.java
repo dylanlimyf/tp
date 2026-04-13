@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Displays the full contents of a single block.
+ */
 public class ViewBlockCommand extends Command {
     private static final String HELP_DESCRIPTION = """
             Format: viewblock INDEX

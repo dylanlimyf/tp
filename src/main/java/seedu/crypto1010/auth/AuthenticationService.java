@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+/**
+ * Validates account input and coordinates loading, registering, and authenticating users.
+ */
 public class AuthenticationService {
     private static final Pattern USERNAME_PATTERN = Pattern.compile("^[A-Za-z0-9_-]{3,20}$");
     private static final int MIN_PASSWORD_LENGTH = 6;

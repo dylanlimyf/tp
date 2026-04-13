@@ -15,6 +15,9 @@ import java.util.Scanner;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
+/**
+ * Sends funds from a wallet to a recipient address and records the transfer locally.
+ */
 public class SendCommand extends Command {
     private static final Pattern ETH_ADDRESS_PATTERN = Pattern.compile("^0x[a-fA-F0-9]{40}$");
     private static final Pattern BTC_LEGACY_ADDRESS_PATTERN =
@@ -81,6 +84,9 @@ public class SendCommand extends Command {
         printTransferSummary(transferRequest);
     }
 
+    /**
+     * Enforces that all mandatory arguments were present and parsed successfully.
+     */
     private ParsedArgs parseRequiredArguments(String args) throws Crypto1010Exception {
         ParsedArgs parsed = parseArguments(args);
         if (parsed == null) {
@@ -104,6 +110,7 @@ public class SendCommand extends Command {
     private TransferRequest createTransferRequest(ParsedArgs parsed) throws Crypto1010Exception {
         BigDecimal amount = parsePositiveAmount(parsed.amount);
         boolean hasManualFee = parsed.fee != null;
+        // A manual fee bypasses speed validation because the reported speed becomes informational only.
         String speed = hasManualFee ? DEFAULT_SPEED : resolveSpeed(parsed.speed);
         BigDecimal fee = resolveValidatedFee(parsed.fee, speed);
         String speedLabel = hasManualFee ? MANUAL_SPEED_LABEL : speed;
@@ -155,6 +162,7 @@ public class SendCommand extends Command {
             return null;
         }
 
+        // Tokenization keeps prefix-style arguments simple while still allowing a free-form trailing note.
         String[] tokens = args.trim().split("\\s+");
         ParsedArgs parsed = new ParsedArgs();
 
@@ -168,6 +176,7 @@ public class SendCommand extends Command {
                 if (parsed.note != null) {
                     return null;
                 }
+                // `note/` consumes the rest of the command so memo text can contain spaces and prefix-like fragments.
                 parsed.note = extractNoteValue(tokens, i);
                 if (parsed.note == null) {
                     return null;
@@ -249,6 +258,9 @@ public class SendCommand extends Command {
         return parsed;
     }
 
+    /**
+     * Reconstructs the note from the current token through the end of the command line.
+     */
     private String extractNoteValue(String[] tokens, int noteTokenIndex) {
         StringBuilder noteBuilder = new StringBuilder(tokens[noteTokenIndex].substring(NOTE_PREFIX.length()));
         for (int i = noteTokenIndex + 1; i < tokens.length; i++) {
@@ -258,6 +270,9 @@ public class SendCommand extends Command {
         return noteValue.isEmpty() ? null : noteValue;
     }
 
+    /**
+     * Parses prefix/value tokens that must appear at most once and must not contain whitespace.
+     */
     private TokenParseResult parseSingleValueToken(String token, ParsedArgs parsed, String prefix,
                                                    String existingValue, Consumer<String> setter) {
         if (!token.startsWith(prefix)) {
@@ -290,6 +305,7 @@ public class SendCommand extends Command {
             return manualFee;
         }
 
+        // Default fees are fixed constants so all callers use the same implied fee schedule.
         return switch (speed) {
         case "slow" -> SLOW_FEE;
         case "standard" -> STANDARD_FEE;
@@ -316,6 +332,9 @@ public class SendCommand extends Command {
                 || SOL_ADDRESS_PATTERN.matcher(address).matches();
     }
 
+    /**
+     * Mutable parse target used while iterating through the prefixed arguments.
+     */
     private static class ParsedArgs {
         String walletName;
         String recipientAddress;
@@ -325,6 +344,9 @@ public class SendCommand extends Command {
         String note;
     }
 
+    /**
+     * Result of matching one token against one supported prefix.
+     */
     private enum TokenParseResult {
         NOT_MATCHED,
         PARSED,

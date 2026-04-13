@@ -6,6 +6,9 @@ import seedu.crypto1010.ui.CliVisuals;
 
 import java.util.Scanner;
 
+/**
+ * Ends the current account session after explicit confirmation.
+ */
 public class LogoutCommand extends Command {
     private static final String HELP_DESCRIPTION = """
             Format: logout

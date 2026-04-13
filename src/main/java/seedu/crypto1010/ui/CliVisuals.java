@@ -3,6 +3,9 @@ package seedu.crypto1010.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Renders formatted panels, tables, and status messages for the CLI.
+ */
 public final class CliVisuals {
     private static final int PANEL_WIDTH = 72;
     private static final int LEGACY_WIDTH = 60;

@@ -10,6 +10,9 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Displays the current balance of one wallet.
+ */
 public class BalanceCommand extends Command {
     private static final String HELP_DESCRIPTION = """
             Format: balance w/WALLET_NAME

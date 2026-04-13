@@ -16,6 +16,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Loads and saves blockchain data using the application's JSON format.
+ */
 public class BlockchainStorage {
     private static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private static final String DATA_DIR = "data";
@@ -53,6 +56,9 @@ public class BlockchainStorage {
         Files.writeString(dataFilePath, toJson(blockchain), StandardCharsets.UTF_8);
     }
 
+    /**
+     * Serializes the blockchain into the small JSON subset understood by the custom parser below.
+     */
     private String toJson(Blockchain blockchain) {
         StringBuilder sb = new StringBuilder();
         sb.append("{\n  \"blocks\": [");
@@ -81,6 +87,9 @@ public class BlockchainStorage {
         return sb.toString();
     }
 
+    /**
+     * Parses blockchain JSON and validates the presence and shape of all required fields.
+     */
     private Blockchain fromJson(String json) throws IOException {
         Object parsed = new JsonParser(json).parse();
         if (!(parsed instanceof Map<?, ?> root)) {
@@ -171,6 +180,9 @@ public class BlockchainStorage {
                 .replace("\t", "\\t");
     }
 
+    /**
+     * Minimal JSON parser that supports exactly the value types used by the storage format.
+     */
     private static final class JsonParser {
         private final String input;
         private int index;
@@ -315,6 +327,9 @@ public class BlockchainStorage {
             }
         }
 
+        /**
+         * Parses JSON numbers as either {@code Long} or {@code Double}, which is sufficient for this file format.
+         */
         private Object parseNumber() throws IOException {
             int start = index;
             if (consumeIf('-')) {

@@ -3,6 +3,9 @@ package seedu.crypto1010.model;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
+/**
+ * Normalizes and validates wallet currency codes.
+ */
 public final class CurrencyCode {
     public static final String GENERIC = "generic";
     private static final Pattern SPECIFIC_CURRENCY_PATTERN = Pattern.compile("^[A-Za-z0-9]{2,10}$");

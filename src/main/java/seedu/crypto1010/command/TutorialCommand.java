@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Runs a guided tutorial using a temporary blockchain and wallet manager.
+ */
 public class TutorialCommand extends Command {
     private static final String HELP_DESCRIPTION = """
             Format: tutorial start

@@ -9,6 +9,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+/**
+ * Loads and saves wallets together with their local transaction history.
+ */
 public class WalletStorage {
     private static final String DATA_DIR = "data";
     private static final String FILE_NAME = "wallets.txt";
@@ -27,6 +30,9 @@ public class WalletStorage {
         this.dataFilePath = StorageUtils.resolveAccountDataFilePath(appClass, DATA_DIR, accountName, FILE_NAME);
     }
 
+    /**
+     * Loads the line-based wallet format, where wallet headers are followed by their transaction lines.
+     */
     public WalletManager load() throws IOException {
         WalletManager walletManager = new WalletManager();
         if (!Files.exists(dataFilePath)) {
@@ -41,6 +47,7 @@ public class WalletStorage {
                 continue;
             }
             if (line.startsWith(WALLET_PREFIX)) {
+                // A wallet header starts a new wallet context for the following transaction lines.
                 String walletData = line.substring(WALLET_PREFIX.length());
                 String[] walletFields = walletData.split("\\|", 2);
                 String walletName = unescape(walletFields[0]);
@@ -69,6 +76,9 @@ public class WalletStorage {
         return walletManager;
     }
 
+    /**
+     * Saves wallets using a compact line-based format that is easy to inspect and append to.
+     */
     public void save(WalletManager walletManager) throws IOException {
         StringBuilder content = new StringBuilder();
         for (Wallet wallet : walletManager.getWallets()) {
@@ -87,6 +97,9 @@ public class WalletStorage {
         Files.writeString(dataFilePath, content.toString(), StandardCharsets.UTF_8);
     }
 
+    /**
+     * Escapes control characters so wallet names and history entries stay on one storage line each.
+     */
     private String escape(String value) {
         return value
                 .replace("\\", "\\\\")
@@ -95,6 +108,9 @@ public class WalletStorage {
                 .replace("\t", "\\t");
     }
 
+    /**
+     * Reconstructs the original string values from the escaped storage representation.
+     */
     private String unescape(String value) {
         StringBuilder result = new StringBuilder();
         boolean escaping = false;

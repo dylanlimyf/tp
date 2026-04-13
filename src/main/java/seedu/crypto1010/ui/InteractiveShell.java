@@ -17,6 +17,9 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Wraps console input so the application can use JLine when available and fall back otherwise.
+ */
 public final class InteractiveShell {
     private final Scanner scanner;
     private final LineReader lineReader;
@@ -40,6 +43,9 @@ public final class InteractiveShell {
         return new InteractiveShell(scanner, createLineReader(completer));
     }
 
+    /**
+     * Reads an unmasked line of input, preferring JLine but falling back to {@link Scanner} when needed.
+     */
     public String readPlain(String prompt) {
         if (lineReader != null) {
             try {
@@ -62,6 +68,9 @@ public final class InteractiveShell {
         }
     }
 
+    /**
+     * Reads a masked password when the terminal supports it, otherwise falls back to plain input.
+     */
     public String readSecret(String prompt) {
         if (lineReader != null) {
             try {
@@ -85,6 +94,9 @@ public final class InteractiveShell {
         return readPlain(prompt);
     }
 
+    /**
+     * Reads a command line without printing an additional fallback prompt.
+     */
     public String readCommand(String prompt) {
         if (lineReader != null) {
             try {
@@ -106,6 +118,9 @@ public final class InteractiveShell {
         }
     }
 
+    /**
+     * Builds a JLine reader only when the process is attached to a capable interactive console.
+     */
     private static LineReader createLineReader(Completer completer) {
         if (System.console() == null) {
             return null;

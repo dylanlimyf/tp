@@ -12,6 +12,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Loads and saves registered account credentials.
+ */
 public class AccountStorage {
     private static final String DATA_DIR = "data";
     private static final String ACCOUNTS_DIR = "accounts";

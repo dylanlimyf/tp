@@ -10,6 +10,9 @@ import org.bouncycastle.crypto.digests.RIPEMD160Digest;
 
 import seedu.crypto1010.exceptions.Crypto1010Exception;
 
+/**
+ * Generates secp256k1 key pairs and derives wallet addresses for supported currencies.
+ */
 public class KeyPair {
     private static final String GENERATE_START = "Generating secp256k1 keypair...";
     private static final String PRIVATE_KEY_DISPLAY = "Private key: ";
@@ -76,6 +79,9 @@ public class KeyPair {
         return currencyCode;
     }
 
+    /**
+     * Picks the address derivation strategy that matches the wallet currency.
+     */
     public static KeyPair generate(String currencyCode) throws Crypto1010Exception {
         String normalized = CurrencyCode.normalizeOrDefault(currencyCode);
         if (normalized.equals("btc")) {
@@ -165,6 +171,9 @@ public class KeyPair {
                            address, CurrencyCode.GENERIC);
     }
 
+    /**
+     * Ethereum addresses use the last 20 bytes of the Keccak-256 hash of the uncompressed public key.
+     */
     private static String deriveEthAddress(ECPoint publicKeyPoint) {
         byte[] publicKeyBytes = new byte[64];
         byte[] xBytes = toBytes32(publicKeyPoint.xCoord);
@@ -184,6 +193,9 @@ public class KeyPair {
         return address.toString();
     }
 
+    /**
+     * Builds a legacy Base58Check Bitcoin address from the compressed public key.
+     */
     private static String deriveBtcAddress(ECPoint publicKeyPoint) throws Crypto1010Exception {
         byte[] compressedPublicKey = new byte[33];
         compressedPublicKey[0] = publicKeyPoint.yCoord.testBit(0) ? (byte) 0x03 : (byte) 0x02;
@@ -234,6 +246,9 @@ public class KeyPair {
         }
     }
 
+    /**
+     * Normalizes an unsigned big integer into the fixed 32-byte width expected by secp256k1 operations.
+     */
     private static byte[] toBytes32(BigInteger value) {
         byte[] bytes = value.toByteArray();
         byte[] result = new byte[32];
@@ -245,6 +260,9 @@ public class KeyPair {
         return result;
     }
 
+    /**
+     * Generates a private key in the valid secp256k1 range [1, curveOrder).
+     */
     private static BigInteger generatePrivateKey() {
         BigInteger privateKey;
         do {
@@ -262,6 +280,9 @@ public class KeyPair {
                 + hex.substring(hex.length() - TRUNCATED_PART_LENGTH);
     }
 
+    /**
+     * Point at infinity acts as the additive identity during elliptic-curve arithmetic.
+     */
     private static class ECPoint {
         final BigInteger xCoord;
         final BigInteger yCoord;
@@ -280,6 +301,9 @@ public class KeyPair {
         }
     }
 
+    /**
+     * Minimal secp256k1 arithmetic used to derive public keys from private keys.
+     */
     private static class ECCurve {
         private static BigInteger floorMod(BigInteger a) {
             return a.mod(fieldPrime).add(fieldPrime).mod(fieldPrime);
@@ -357,6 +381,9 @@ public class KeyPair {
         }
     }
 
+    /**
+     * Encodes the final Bitcoin payload using the Base58 alphabet that avoids ambiguous characters.
+     */
     private static class Base58 {
         private static final String ALPHABET =
                 "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";

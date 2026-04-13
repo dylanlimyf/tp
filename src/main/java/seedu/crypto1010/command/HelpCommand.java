@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Shows either the command list or detailed help for one command.
+ */
 public class HelpCommand extends Command {
     private static final String COMMAND_PREFIX = "c/";
     private static final String HELP_DESCRIPTION = """

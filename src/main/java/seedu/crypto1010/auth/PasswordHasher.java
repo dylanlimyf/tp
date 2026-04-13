@@ -5,6 +5,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
+/**
+ * Generates salts and hashes passwords before they are persisted.
+ */
 final class PasswordHasher {
     private static final int SALT_LENGTH_BYTES = 16;
     private static final SecureRandom RANDOM = new SecureRandom();

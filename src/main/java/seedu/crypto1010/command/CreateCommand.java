@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
+/**
+ * Creates a wallet for the current account.
+ */
 public class CreateCommand extends Command {
     private static final String HELP_DESCRIPTION = """
             Format: create w/WALLET_NAME [curr/CURRENCY]

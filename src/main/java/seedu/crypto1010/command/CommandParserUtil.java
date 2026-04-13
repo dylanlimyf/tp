@@ -4,6 +4,9 @@ import seedu.crypto1010.exceptions.Crypto1010Exception;
 
 import java.math.BigDecimal;
 
+/**
+ * Provides shared parsing helpers used by multiple command classes.
+ */
 public final class CommandParserUtil {
 
     private static final String WALLET_PREFIX = "w/";

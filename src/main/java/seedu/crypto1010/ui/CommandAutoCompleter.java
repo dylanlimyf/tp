@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+/**
+ * Supplies context-aware suggestions for the interactive shell.
+ */
 public class CommandAutoCompleter implements Completer {
     private static final List<String> SPEED_VALUES = List.of("speed/slow", "speed/standard", "speed/fast");
     private static final List<String> CURRENCY_VALUES = List.of(

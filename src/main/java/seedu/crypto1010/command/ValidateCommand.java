@@ -8,6 +8,9 @@ import seedu.crypto1010.ui.CliVisuals;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Validates the integrity of the current blockchain.
+ */
 public class ValidateCommand extends Command {
     private static final String HELP_DESCRIPTION = """
             Format: validate

@@ -7,6 +7,9 @@ import java.util.Objects;
 
 import seedu.crypto1010.exceptions.Crypto1010Exception;
 
+/**
+ * Represents one wallet together with its generated address and local transaction history.
+ */
 public class Wallet {
     private static final String NO_ADDRESS_ERROR = "Error: Generate keys first";
     private static final String INVALID_KEYS_ERROR = "Error: Keys must contain public and private keys";

@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
+/**
+ * Lists the wallets owned by the current account.
+ */
 public class ListCommand extends Command {
     private static final String HELP_DESCRIPTION = """
             Format: list

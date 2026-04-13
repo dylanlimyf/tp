@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Displays a compact summary of the blockchain.
+ */
 public class ViewChainCommand extends Command {
     private static final String HELP_DESCRIPTION = """
             Format: viewchain

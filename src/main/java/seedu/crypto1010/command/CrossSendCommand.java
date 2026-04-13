@@ -14,6 +14,9 @@ import java.util.Objects;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
+/**
+ * Sends funds from the current account to another registered account.
+ */
 public class CrossSendCommand extends Command {
     private static final String ACCOUNT_PREFIX = "acc/";
     private static final String AMOUNT_PREFIX = "amt/";

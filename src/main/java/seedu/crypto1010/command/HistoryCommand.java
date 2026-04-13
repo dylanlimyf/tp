@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
+/**
+ * Displays the recorded transaction history for one wallet.
+ */
 public class HistoryCommand extends Command {
     private static final String HELP_DESCRIPTION = """
             Format: history w/WALLET_NAME

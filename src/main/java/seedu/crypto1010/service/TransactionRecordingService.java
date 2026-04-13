@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Records same-account transfers on the blockchain and in wallet history.
+ */
 public class TransactionRecordingService {
     static final String WALLET_NOT_FOUND_ERROR = "Error: Wallet not found.";
     static final String INSUFFICIENT_BALANCE_ERROR = "Error: Insufficient balance.";

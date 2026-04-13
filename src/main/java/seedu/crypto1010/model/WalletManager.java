@@ -8,6 +8,9 @@ import java.util.Optional;
 
 import seedu.crypto1010.exceptions.Crypto1010Exception;
 
+/**
+ * Manages wallet creation and lookup for a single account.
+ */
 public class WalletManager {
     private static final char RESERVED_NAME_DELIMITER = '|';
     private static final int MAX_WALLET_NAME_LENGTH = 32;

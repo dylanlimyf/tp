@@ -29,6 +29,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
+/**
+ * Coordinates authentication, command execution, and persistence for the CLI application.
+ */
 public class Crypto1010 {
     private static final Logger LOGGER = Logger.getLogger(Crypto1010.class.getName());
     private static final String ACCOUNT_ACCESS_HEADER = "Crypto1010 Account Access";
@@ -69,6 +72,9 @@ public class Crypto1010 {
         CliVisuals.printLogo(loadLogoLines(), STARTUP_SLOGAN);
     }
 
+    /**
+     * Loads the optional ASCII logo bundled with the application.
+     */
     private static List<String> loadLogoLines() {
         InputStream logoStream = Crypto1010.class.getClassLoader().getResourceAsStream(LOGO_RESOURCE_PATH);
         if (logoStream == null) {
@@ -86,6 +92,7 @@ public class Crypto1010 {
             InteractiveShell shell,
             CommandAutoCompleter completer,
             String accountUsername) {
+        // Each authenticated session reads and writes storage files scoped to that account.
         printWelcome(accountUsername);
         BlockchainStorage blockchainStorage = new BlockchainStorage(Crypto1010.class, accountUsername);
         WalletStorage walletStorage = new WalletStorage(Crypto1010.class, accountUsername);
@@ -110,6 +117,7 @@ public class Crypto1010 {
             try {
                 message = shell.readCommand(buildCommandPrompt(accountUsername));
             } catch (RuntimeException e) {
+                // Terminal failures are treated like an exit so the current session can still be saved.
                 completer.setAuthMode(true);
                 saveData(
                         blockchainStorage,
@@ -121,6 +129,7 @@ public class Crypto1010 {
                 return SessionOutcome.EXIT;
             }
             if (message == null) {
+                // End-of-input should shut down cleanly after persisting the latest in-memory state.
                 completer.setAuthMode(true);
                 saveData(
                         blockchainStorage,
@@ -142,6 +151,7 @@ public class Crypto1010 {
                 }
                 long startNs = System.nanoTime();
                 if (c instanceof ExitCommand) {
+                    // Exit ends the whole application instead of returning to account selection.
                     c.execute(blockchain, in);
                     long durationMs = (System.nanoTime() - startNs) / 1_000_000;
                     LOGGER.fine(() -> "Command executed successfully: exit (" + durationMs + " ms)");
@@ -157,6 +167,7 @@ public class Crypto1010 {
 
                 c.execute(blockchain, in);
                 if (c instanceof TutorialCommand tutorialCommand && tutorialCommand.isExitRequested()) {
+                    // The tutorial can trigger a full application exit via the `exit` command.
                     saveData(
                             blockchainStorage,
                             walletStorage,
@@ -178,6 +189,7 @@ public class Crypto1010 {
                         allowWalletSave);
 
                 if (c instanceof LogoutCommand logoutCommand && logoutCommand.isLogoutConfirmed()) {
+                    // Logout returns to account access without terminating the process.
                     System.out.println("Logged out from " + accountUsername + ".");
                     completer.setWalletManager(null);
                     completer.setAuthMode(true);
@@ -190,6 +202,9 @@ public class Crypto1010 {
         }
     }
 
+    /**
+     * Loads registered accounts, defaulting to an empty account list when storage is unavailable.
+     */
     private static AuthenticationService loadAuthenticationService() {
         AuthenticationService authenticationService = new AuthenticationService(new AccountStorage(Crypto1010.class));
         try {
@@ -200,6 +215,9 @@ public class Crypto1010 {
         return authenticationService;
     }
 
+    /**
+     * Handles the login/register/exit loop before entering an authenticated session.
+     */
     private static String authenticateUser(InteractiveShell shell, AuthenticationService authenticationService) {
         while (true) {
             printAuthenticationMenu(authenticationService);
@@ -308,6 +326,9 @@ public class Crypto1010 {
         return COMMAND_PROMPT_FORMAT.formatted(accountUsername);
     }
 
+    /**
+     * Loads the current account's blockchain and tracks whether saving back is safe.
+     */
     private static LoadResult<Blockchain> loadBlockchain(BlockchainStorage storage) {
         try {
             return new LoadResult<>(storage.load(), true);
@@ -317,6 +338,9 @@ public class Crypto1010 {
         }
     }
 
+    /**
+     * Loads the current account's wallets and tracks whether saving back is safe.
+     */
     private static LoadResult<WalletManager> loadWalletManager(WalletStorage storage) {
         try {
             return new LoadResult<>(storage.load(), true);
@@ -326,6 +350,9 @@ public class Crypto1010 {
         }
     }
 
+    /**
+     * Persists the current session state only for stores that were loaded successfully.
+     */
     private static void saveData(
             BlockchainStorage blockchainStorage,
             WalletStorage walletStorage,

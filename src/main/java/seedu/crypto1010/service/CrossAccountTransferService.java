@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+/**
+ * Coordinates cross-account transfers and persists both sides of the transfer.
+ */
 public class CrossAccountTransferService {
     static final String RECIPIENT_NOT_FOUND_ERROR = "Error: Recipient account not found.";
     static final String SAME_ACCOUNT_ERROR = "Error: Cannot send to your own account.";
@@ -42,6 +45,9 @@ public class CrossAccountTransferService {
         this.storageAnchor = Objects.requireNonNull(storageAnchor);
     }
 
+    /**
+     * Transfers funds to another account while keeping sender and recipient storage updates consistent.
+     */
     public CrossAccountTransferResult transfer(String recipientAccountName, BigDecimal amount, String currencyCode,
                                                Blockchain senderBlockchain) throws Crypto1010Exception {
         Objects.requireNonNull(amount);
@@ -75,6 +81,7 @@ public class CrossAccountTransferService {
 
         WalletManager recipientWalletManager = loadRecipientWalletManager(recipientWalletStorage);
         Blockchain recipientBlockchain = loadRecipientBlockchain(recipientBlockchainStorage);
+        // Keep snapshots so partially persisted cross-account transfers can be rolled back.
         WalletManager recipientWalletManagerBefore = copyWalletManager(recipientWalletManager);
         Blockchain recipientBlockchainBefore = copyBlockchain(recipientBlockchain);
 
@@ -85,6 +92,7 @@ public class CrossAccountTransferService {
         RecipientWalletResolution recipientResolution =
                 resolveOrCreateRecipientWallet(recipientWalletManager, normalizedCurrencyCode);
 
+        // Persist against cloned sender state first so live in-memory state changes only after durable saves succeed.
         recipientBlockchain.addTransactions(List.of(formatRecipientTransaction(
                 recipientResolution.wallet().getName(),
                 normalizedCurrencyCode,
@@ -124,6 +132,9 @@ public class CrossAccountTransferService {
                 recipientResolution.wasCreated());
     }
 
+    /**
+     * Checks account storage rather than the current wallet manager because the recipient is another account.
+     */
     private boolean accountExists(String recipientAccountName) throws Crypto1010Exception {
         AccountStorage accountStorage = new AccountStorage(storageAnchor);
         try {
@@ -165,6 +176,9 @@ public class CrossAccountTransferService {
         }
     }
 
+    /**
+     * Finds the recipient wallet for the requested currency or creates one when none exists yet.
+     */
     private RecipientWalletResolution resolveOrCreateRecipientWallet(WalletManager recipientWalletManager,
                                                                      String currencyCode)
             throws Crypto1010Exception {
@@ -181,6 +195,9 @@ public class CrossAccountTransferService {
         return new RecipientWalletResolution(createdWallet, true);
     }
 
+    /**
+     * Generates a readable wallet name that remains unique within the recipient account.
+     */
     private String generateRecipientWalletName(WalletManager walletManager, String currencyCode) {
         if (!walletManager.hasWallet(currencyCode)) {
             return currencyCode;
@@ -259,6 +276,9 @@ public class CrossAccountTransferService {
         }
     }
 
+    /**
+     * Restores both accounts to their pre-transfer snapshots if any save step fails.
+     */
     private void rollbackPersistedTransfer(
             WalletStorage senderWalletStorage,
             BlockchainStorage senderBlockchainStorage,
@@ -306,6 +326,9 @@ public class CrossAccountTransferService {
         return accountName == null ? "" : accountName.trim().toLowerCase(Locale.ROOT);
     }
 
+    /**
+     * Copies only the wallet metadata and transaction history needed for persistence rollback.
+     */
     private WalletManager copyWalletManager(WalletManager original) {
         WalletManager copy = new WalletManager();
         for (Wallet wallet : original.getWallets()) {
@@ -317,6 +340,9 @@ public class CrossAccountTransferService {
         return copy;
     }
 
+    /**
+     * Copies blocks so persisted changes can be prepared without mutating the live sender chain early.
+     */
     private Blockchain copyBlockchain(Blockchain original) {
         List<seedu.crypto1010.model.Block> copiedBlocks = new ArrayList<>();
         for (seedu.crypto1010.model.Block block : original.getBlocks()) {
