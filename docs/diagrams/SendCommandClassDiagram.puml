@@ -17,13 +17,19 @@ class SendCommand {
   +execute(blockchain: Blockchain, in: Scanner): void
 }
 
-class ParsedArgs {
+class "SendCommand.ParsedArgs" as ParsedArgs {
   -walletName: String
   -recipientAddress: String
   -amount: String
   -speed: String
   -fee: String
   -note: String
+}
+
+enum "SendCommand.TokenParseResult" as TokenParseResult {
+  NOT_MATCHED
+  PARSED
+  INVALID
 }
 
 class WalletManager {
@@ -46,6 +52,7 @@ SendCommand --|> Command
 SendCommand *-- TransactionRecordingService : owns
 SendCommand --> WalletManager : uses
 SendCommand ..> ParsedArgs : creates
+SendCommand ..> TokenParseResult : uses
 SendCommand ..> TransferRequest : creates
 SendCommand ..> Blockchain : mutates
 SendCommand ..> Crypto1010Exception : throws

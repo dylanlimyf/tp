@@ -17,13 +17,15 @@ class Wallet {
   -currencyCode: String
   -transactionHistory: List<String>
   -address: String
-  +setKeys(keys: Key[]): void
+  -keyPair: KeyPair
+  +hasKeyPair(): boolean
+  +setKeys(keys: KeyPair): void
   +getAddress(): String
   +addTransaction(entry: String): void
 }
 
-class Key {
-  +generateKeyPair(): Key[]
+class KeyPair {
+  +generate(currencyCode: String): KeyPair
   +getWalletAddress(): String
 }
 
@@ -40,9 +42,9 @@ class CrossSendCommand {
 }
 
 WalletManager "1" *-- "*" Wallet
-Wallet ..> Key : stores generated keypair
+Wallet ..> KeyPair : stores generated keypair
 KeygenCommand ..> WalletManager : lookup wallet
-KeygenCommand ..> Key : generateKeyPair()
+KeygenCommand ..> KeyPair : generate()
 SendCommand ..> WalletManager : resolve sender wallet
 CrossSendCommand ..> WalletManager : resolve currency wallet
 

@@ -31,7 +31,7 @@ class ValidationResult {
   +getReason(): String
 }
 
-Blockchain "1" *-- "1..*" Block : blocks
+Blockchain "1" *-- "0..*" Block : blocks
 Blockchain ..> ValidationResult : returns
 
 note right of Blockchain

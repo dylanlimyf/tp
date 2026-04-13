@@ -15,7 +15,9 @@ participant "blockchainStorage:BlockchainStorage" as BS
 
 User -> App: send w/bob to/0x... amt/2 fee/0.001
 App -> Parser: parse(rawInput)
-Parser --> App: new SendCommand(arguments, walletManager)
+create Send
+Parser -> Send: <<create>> SendCommand(arguments, walletManager)
+Parser --> App: sendCmd
 App -> Send: execute(chain, in)
 
 Send -> WM: hasWallet("bob")
@@ -42,10 +44,10 @@ else wallet found
   Chain -> Chain: append createdBlock
 
   Service --> Send: success
-  Send --> App: print transfer summary
+  Send -> User: print transfer summary
+  Send --> App: return
   App -> BS: save(chain)
   App -> WS: save(walletManager)
-  App --> User: output
 end
 
 @enduml

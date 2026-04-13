@@ -5,13 +5,14 @@ autoactivate on
 actor User
 participant "app:Crypto1010" as App
 participant "parser:Parser" as Parser
-participant "validateCmd:ValidateCommand" as Validate
 participant "chain:Blockchain" as Chain
 participant "block:Block" as Block
 
 User -> App: validate
 App -> Parser: parse("validate")
-Parser --> App: new ValidateCommand()
+create Validate
+Parser -> Validate: <<create>> ValidateCommand()
+Parser --> App: validateCmd
 App -> Validate: execute(chain, in)
 Validate -> Chain: validate()
 
@@ -36,7 +37,7 @@ loop each block i from 0..n-1
 end
 
 Chain --> Validate: ValidationResult
-Validate --> App: print validation result
-App --> User: output
+Validate -> User: print validation result
+Validate --> App: return
 
 @enduml
