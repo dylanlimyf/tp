@@ -46,7 +46,7 @@ class WalletStorageTest {
             alice.addTransaction("to/0xabc amt/1 speed/standard fee/0.001");
             bob.addTransaction("to/0xdef amt/2 speed/manual fee/0.1 note/rent");
         } catch (Crypto1010Exception e) {
-            throw new IOException(e);
+            throw new IOException(e.getMessage());
         }
 
         WalletStorage storage = new WalletStorage(WalletStorageTest.class);
