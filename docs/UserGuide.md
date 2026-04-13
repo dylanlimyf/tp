@@ -133,7 +133,8 @@ Format: `create w/WALLET_NAME [curr/CURRENCY]`
 
 - Creates a wallet for the current account and persists it on save.
 - Wallet names are unique (case-insensitive).
-- `curr/` is optional.
+- `CURRENCY` can only be `eth` or `btc` for ethereum and bitcoin wallet types respectively.
+- `curr/` is optional. Not including `curr/CURRENCY` results in a wallet with generic currency code.
 - A wallet tagged with a specific currency can be used by `crossSend`.
 - At most one wallet per specific currency is allowed in the same account.
 
@@ -148,6 +149,7 @@ Format: `list`
 
 - Shows all wallets in the current account (including previously saved wallets loaded at login).
 - Wallets created with a specific currency display that currency in the list.
+- Wallets with keys generated will show address in the format of currency code.
 
 <span id="cmd-keygen"></span>
 ### `keygen`: Generate keys for a wallet
@@ -156,7 +158,7 @@ Format: `keygen w/WALLET_NAME`
 - Generates a public/private key pair for an existing wallet.
 - Fails if the wallet does not exist.
 - Fails if that wallet already has keys (key regeneration is blocked).
-- Generates a wallet address for that wallet.
+- Generates a wallet address for that wallet based on wallet's currency code.
 - Key generation is required if you want this wallet to have a local address (for receiving to that local address).
 - `send` does not require sender key generation.
 
@@ -185,7 +187,8 @@ Format: `send w/WALLET_NAME to/RECIPIENT_ADDRESS amt/AMOUNT [speed/SPEED] [fee/F
 - If `fee/` is provided, it overrides speed-based fee.
 - Address validation supports Ethereum, Bitcoin, and Solana address formats.
 - Total deduction = `AMOUNT + FEE`.
-- `note/` captures the remainder of input after it appears, so place it last.
+- `note/` captures the remainder of input after it appears.
+- `note/` must be placed at the last position.
 
 Examples:
 - `send w/bob to/0x1111111111111111111111111111111111111111 amt/1.5`
