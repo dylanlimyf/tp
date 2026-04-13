@@ -72,13 +72,13 @@ public class TutorialCommand extends Command {
             It doesn't store coins directly — instead, it holds cryptographic keys that prove ownership.
             Think of it like a password manager for the blockchain.
             Let's create one for Alice.
-           """,
+            """,
 
         """
             Every participant on the blockchain needs their own wallet with a unique identity.
             Bob's wallet will be completely independent from Alice's — no central authority connects them.
             Let's create one for Bob too.
-          """,
+            """,
 
         """
             Now let's list both wallets.
@@ -105,8 +105,8 @@ public class TutorialCommand extends Command {
 
         """
             Bob now has his own key pair too.
-            Notice each address is completely unique — the pool of possible private keys is so astronomically large (2²⁵⁶)
-            that generating the same one twice is virtually impossible.
+            Notice each address is completely unique, the pool of possible
+            private keys is so astronomically large (2²⁵⁶) that generating the same one twice is virtually impossible.
             Let's list both wallets now to see how they look.
             """,
 
