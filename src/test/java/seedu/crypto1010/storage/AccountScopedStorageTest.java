@@ -65,8 +65,8 @@ class AccountScopedStorageTest {
         Blockchain loadedAliceChain = aliceStorage.load();
         Blockchain loadedBobChain = bobStorage.load();
 
-        assertEquals(3, loadedAliceChain.size());
-        assertEquals(2, loadedBobChain.size());
+        assertEquals(2, loadedAliceChain.size());
+        assertEquals(1, loadedBobChain.size());
         assertTrue(loadedAliceChain.validate().isValid());
         assertTrue(loadedBobChain.validate().isValid());
     }

@@ -74,7 +74,8 @@ class ViewBlockCommandTest {
         ViewBlockCommand command = new ViewBlockCommand("0");
         String output = normalizeOutput(runCommand(command, blockchain));
 
-        assertTrue(output.contains("Block #0"));
+        assertTrue(output.contains("Block Details"));
+        assertTrue(output.contains("Block Index : 0"));
         assertTrue(output.contains("Genesis Block"));
         assertTrue(output.contains(blockchain.getBlock(0).getCurrentHash()));
     }
@@ -86,7 +87,8 @@ class ViewBlockCommandTest {
         ViewBlockCommand command = new ViewBlockCommand("1");
         String output = normalizeOutput(runCommand(command, blockchain));
 
-        assertTrue(output.contains("Block #1"));
+        assertTrue(output.contains("Block Details"));
+        assertTrue(output.contains("Block Index : 1"));
         assertTrue(output.contains("network -> alice : 100"));
         assertTrue(output.contains(blockchain.getBlock(1).getCurrentHash()));
     }

@@ -24,7 +24,7 @@ class TransactionRecordingServiceTest {
         Blockchain blockchain = Blockchain.createDefault();
         WalletManager walletManager = new WalletManager();
         Wallet bob = walletManager.createWallet("bob");
-        // manually fund bob for this test — bypasses CreateCommand auto-funding
+        // manually fund bob for this test - bypasses CreateCommand auto-funding
         blockchain.addTransactions(List.of("network -> bob : 5"));
         // blockchain is now: block 0 (genesis), block 1 (funding)
 
@@ -43,9 +43,9 @@ class TransactionRecordingServiceTest {
         Block latestBlock = blockchain.getBlock(2);
         assertEquals(List.of(
                 "bob -> " + ETH_ADDRESS + " : 1",
-                "bob -> network-fee : 0.0010"), latestBlock.getTransactions());
+                "bob -> network-fee : 0.001"), latestBlock.getTransactions());
         // history: amt should reflect actual amount sent (1), not 2
-        assertEquals(List.of("to/" + ETH_ADDRESS + " amt/1 speed/standard fee/0.0010 note/rent"),
+        assertEquals(List.of("to/" + ETH_ADDRESS + " amt/1 speed/standard fee/0.001 note/rent"),
                      bob.getTransactionHistory());
     }
 
@@ -79,7 +79,7 @@ class TransactionRecordingServiceTest {
         Blockchain blockchain = Blockchain.createDefault();
         WalletManager walletManager = new WalletManager();
         Wallet alice = walletManager.createWallet("alice");
-        // manually fund alice with only 0.5 — guaranteed insufficient for amount 1
+        // manually fund alice with only 0.5 - guaranteed insufficient for amount 1
         blockchain.addTransactions(List.of("network -> alice : 0.5"));
         // blockchain: block 0 (genesis), block 1 (funding)
 

@@ -23,7 +23,8 @@ class WalletManagerTest {
 
         Crypto1010Exception exception =
                 assertThrows(Crypto1010Exception.class, () -> walletManager.createWallet("bob", "btc"));
-        assertEquals("wallet currency already exists: btc", exception.getMessage());
+        assertEquals("Error: a wallet for that currency already exists in this account."
+                + "Use: create w/WALLET_NAME [curr/CURRENCY]", exception.getMessage());
     }
 
     @Test

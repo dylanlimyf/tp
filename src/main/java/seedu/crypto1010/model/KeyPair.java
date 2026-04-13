@@ -210,7 +210,7 @@ public class KeyPair {
         versioned[0] = BTC_VERSION_BYTE;
         System.arraycopy(ripemd160Hash, 0, versioned, 1, 20);
 
-        // 4-byte checksum — double SHA-256
+        // 4-byte checksum - double SHA-256
         byte[] checksum = computeChecksum(versioned);
 
         // append checksum
@@ -290,16 +290,16 @@ public class KeyPair {
                 return point;
             }
 
-            // λ = 3x² × (2y)⁻¹ mod p
+            // lambda = 3x^2 * (2y)^-1 mod p
             BigInteger lambda = BigInteger.valueOf(3)
                     .multiply(point.xCoord.pow(2))
                     .mod(fieldPrime)
                     .multiply(floorMod(BigInteger.TWO.multiply(point.yCoord)).modInverse(fieldPrime))
                     .mod(fieldPrime);
 
-            // x' = λ² - 2x mod p
+            // x' = lambda^2 - 2x mod p
             BigInteger resultX = floorMod(lambda.pow(2).subtract(BigInteger.TWO.multiply(point.xCoord)));
-            // y' = λ(x - x') - y mod p
+            // y' = lambda(x - x') - y mod p
             BigInteger resultY = floorMod(lambda.multiply(point.xCoord.subtract(resultX)).subtract(point.yCoord));
 
             return new ECPoint(resultX, resultY);
@@ -319,14 +319,14 @@ public class KeyPair {
                 return pointDouble(pointOne);
             }
 
-            // λ = (y2 - y1) / (x2 - x1) mod p
+            // lambda = (y2 - y1) / (x2 - x1) mod p
             BigInteger lambda = floorMod(pointTwo.yCoord.subtract(pointOne.yCoord))
                     .multiply(floorMod(pointTwo.xCoord.subtract(pointOne.xCoord)).modInverse(fieldPrime))
                     .mod(fieldPrime);
 
-            // x' = λ² - x1 - x2 mod p
+            // x' = lambda^2 - x1 - x2 mod p
             BigInteger resultX = floorMod(lambda.pow(2).subtract(pointOne.xCoord).subtract(pointTwo.xCoord));
-            // y' = λ(x1 - x') - y1 mod p
+            // y' = lambda(x1 - x') - y1 mod p
             BigInteger resultY = floorMod(lambda.multiply(pointOne.xCoord.subtract(resultX)).subtract(pointOne.yCoord));
 
             return new ECPoint(resultX, resultY);
