@@ -53,14 +53,9 @@ public class CreateCommand extends Command {
         String walletName = parsedArguments.walletName();
         String currencyCode = parsedArguments.currencyCode();
 
-        if (walletManager.hasWallet(walletName)) {
-            throw new Crypto1010Exception(DUPLICATE_ERROR);
-        }
-        if (!CurrencyCode.isGeneric(currencyCode) && walletManager.hasWalletForCurrency(currencyCode)) {
-            throw new Crypto1010Exception(DUPLICATE_CURRENCY_ERROR + " " + CREATE_FORMAT);
-        }
-
         Wallet wallet = walletManager.createWallet(walletName, currencyCode);
+        blockchain.addTransactions(List.of("network -> " + wallet.getName() + " : 100"));
+
         List<List<String>> rows = new ArrayList<>();
         rows.add(List.of("Wallet", wallet.getName()));
         if (!CurrencyCode.isGeneric(currencyCode)) {

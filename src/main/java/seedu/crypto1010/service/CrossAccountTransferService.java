@@ -306,7 +306,7 @@ public class CrossAccountTransferService {
         return accountName == null ? "" : accountName.trim().toLowerCase(Locale.ROOT);
     }
 
-    private WalletManager copyWalletManager(WalletManager original) {
+    private WalletManager copyWalletManager(WalletManager original) throws Crypto1010Exception {
         WalletManager copy = new WalletManager();
         for (Wallet wallet : original.getWallets()) {
             Wallet walletCopy = copy.createWallet(wallet.getName(), wallet.getCurrencyCode());
