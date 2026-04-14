@@ -3,11 +3,13 @@ package seedu.crypto1010.command;
 import seedu.crypto1010.Parser;
 import seedu.crypto1010.exceptions.Crypto1010Exception;
 import seedu.crypto1010.model.Blockchain;
+import seedu.crypto1010.model.Wallet;
 import seedu.crypto1010.model.WalletManager;
 import seedu.crypto1010.ui.CliVisuals;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 /**
@@ -211,7 +213,7 @@ public class TutorialCommand extends Command {
             if (input.equals("tutorial exit")) {
                 break;
             } else if (input.equals(instructions[index]) ||
-                    (index == 8 && input.startsWith("send w/bob amt/3 to/"))) {
+                    (index == 8 && input.equals("send w/bob amt/3 to/" + getAliceAddress(walletManager)))) {
                 Command c = parser.parse(input);
                 try {
                     c.execute(tutorialBlockchain);
@@ -243,5 +245,17 @@ public class TutorialCommand extends Command {
             return List.of("");
         }
         return List.of(text.split("\\R"));
+    }
+
+    private String getAliceAddress(WalletManager walletManager) {
+        Optional<Wallet> aliceWallet = walletManager.findWallet("alice");
+        if (aliceWallet.isPresent()) {
+            try {
+                return aliceWallet.get().getAddress();
+            } catch (Crypto1010Exception e) {
+                CliVisuals.printWarning(ERROR_MESSAGE);
+            }
+        }
+        return "";
     }
 }
